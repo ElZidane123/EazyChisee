@@ -15,15 +15,15 @@ class FranchiseCard extends StatelessWidget {
   });
 
   Color _getTrustColor(int score) {
-    if (score >= 85) return Colors.teal;
-    if (score >= 70) return Colors.orange;
-    return Colors.red;
+    if (score >= 85) return AppColors.success;
+    if (score >= 70) return AppColors.warning;
+    return AppColors.error;
   }
 
   Color _getRiskColor(String risk) {
-    if (risk == 'Low') return Colors.green;
-    if (risk == 'Medium') return Colors.orange;
-    return Colors.red;
+    if (risk == 'Low') return AppColors.success;
+    if (risk == 'Medium') return AppColors.warning;
+    return AppColors.error;
   }
 
   @override
@@ -142,7 +142,7 @@ class FranchiseCard extends StatelessWidget {
                         Text(
                           franchise.category,
                           style: TextStyle(
-                            color: Colors.grey[600],
+                            color: AppColors.textSub,
                             fontSize: 12,
                           ),
                         ),
@@ -276,7 +276,7 @@ class FranchiseCard extends StatelessWidget {
                                     : Icons.bookmark_border,
                                 color: provider.isBookmarked(franchise)
                                     ? AppColors.primary
-                                    : Colors.grey,
+                                    : AppColors.textHint,
                                 size: 20,
                               ),
                               onPressed: () {

@@ -1684,7 +1684,7 @@ class VerifiedMarketplaceScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Marketplace Franchise Terverifikasi'),
-        backgroundColor: Colors.green[700],
+        backgroundColor: AppColors.primaryDark,
       ),
       body: Column(
         children: [
@@ -1728,7 +1728,7 @@ class VerifiedMarketplaceScreen extends StatelessWidget {
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: AppColors.surfaceDim,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(Icons.store, size: 40),
@@ -1737,15 +1737,15 @@ class VerifiedMarketplaceScreen extends StatelessWidget {
                       children: [
                         Text('Franchise Name ${index + 1}'),
                         SizedBox(width: 8),
-                        Icon(Icons.verified, color: Colors.blue, size: 20),
+                        Icon(Icons.verified, color: AppColors.info, size: 20),
                         SizedBox(width: 4),
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: Colors.green,
+                            color: AppColors.primary,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Text('TERVERIFIKASI', 
+                          child: Text('TERVERIFIKASI',
                             style: TextStyle(color: Colors.white, fontSize: 10)),
                         ),
                       ],
@@ -1778,8 +1778,8 @@ class VerifiedMarketplaceScreen extends StatelessWidget {
         Text('Trust Score: ', style: TextStyle(fontSize: 12)),
         LinearProgressIndicator(
           value: score / 100,
-          backgroundColor: Colors.grey[300],
-          color: score >= 80 ? Colors.green : (score >= 60 ? Colors.orange : Colors.red),
+          backgroundColor: AppColors.divider,
+          color: score >= 80 ? AppColors.success : (score >= 60 ? AppColors.warning : AppColors.error),
           minHeight: 8,
         ),
         SizedBox(width: 8),

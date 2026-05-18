@@ -6,6 +6,7 @@ import 'package:eazychise/core/providers/auth_provider.dart';
 import 'package:eazychise/core/providers/franchise_provider.dart';
 import 'package:eazychise/core/providers/funding_provider.dart';
 import 'package:eazychise/core/providers/verification_provider.dart';
+import 'package:eazychise/core/providers/notification_provider.dart';
 import 'package:eazychise/presentation/screens/splash_screen.dart';
 import 'package:eazychise/presentation/screens/auth/login_screen.dart';
 import 'package:eazychise/presentation/screens/auth/register_screen.dart';
@@ -20,6 +21,12 @@ import 'package:eazychise/presentation/screens/verification/franchise_verificati
 import 'package:eazychise/presentation/screens/verification/verification_status_screen.dart';
 import 'package:eazychise/presentation/screens/trust_score_screen.dart';
 import 'package:eazychise/presentation/screens/academy/academy_screen.dart';
+import 'package:eazychise/presentation/screens/onboarding/onboarding_screen.dart';
+import 'package:eazychise/presentation/screens/onboarding/role_selection_screen.dart';
+import 'package:eazychise/presentation/screens/ai_simulator/franchise_simulator_screen.dart';
+import 'package:eazychise/presentation/screens/notification/notification_screen.dart';
+import 'package:eazychise/presentation/screens/location/location_checker_screen.dart';
+import 'package:eazychise/presentation/screens/franchisor/franchisor_dashboard_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,6 +43,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => FranchiseProvider()),
         ChangeNotifierProvider(create: (_) => FundingProvider()),
         ChangeNotifierProvider(create: (_) => VerificationProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],
       child: MaterialApp(
         title: 'EazyChise - Franchise Funding Partner',
@@ -44,15 +52,21 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => const SplashScreenWave(),
+          '/onboarding': (context) => const OnboardingScreen(),
+          '/role-selection': (context) => const RoleSelectionScreen(),
           '/login': (context) => const LoginScreen(),
           '/register': (context) => const RegisterScreen(),
           '/home': (context) => HomeScreen(),
           '/dashboard': (context) => const DashboardScreen(),
           '/marketplace': (context) => const MarketplaceScreen(),
           '/ai-recommendation': (context) => const AIRecommendationScreen(),
+          '/ai-simulator': (context) => const FranchiseSimulatorScreen(),
           '/bep-simulation': (context) => const BEPSimulationScreen(),
           '/funding': (context) => const FundingScreen(),
+          '/notifications': (context) => const NotificationScreen(),
+          '/location-checker': (context) => const LocationCheckerScreen(),
           '/tracking': (context) => const TrackingScreen(),
+          '/franchisor-dashboard': (context) => const FranchisorDashboardScreen(),
           '/profile': (context) => const ProfileScreen(),
           '/franchise-verification': (context) => const FranchiseVerificationScreen(),
           '/verification-status': (context) => const VerificationStatusScreen(),
@@ -126,8 +140,10 @@ class MyApp extends StatelessWidget {
         primary: AppColors.primary,
         secondary: AppColors.accent,
         error: AppColors.error,
-        background: AppColors.background,
         surface: AppColors.surface,
+        onSurface: AppColors.textPrimary,
+        onPrimary: Colors.white,
+        outline: AppColors.divider,
       ),
       appBarTheme: AppBarTheme(
         elevation: 0,
@@ -251,51 +267,101 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// Helper data class untuk menu item HomeScreen
+class _MenuItem {
+  final String title;
+  final IconData icon;
+  final VoidCallback onTap;
+  const _MenuItem(this.title, this.icon, this.onTap);
+}
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final auth = Provider.of<AuthProvider>(context);
+    final isFranchisor = auth.isFranchisor;
+
+    final baseMenuItems = [
+      _MenuItem('Marketplace\nTerverifikasi', Icons.storefront, () {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketplaceScreen()));
+      }),
+      _MenuItem('AI Business\nRecommendation', Icons.psychology, () {
+        Navigator.pushNamed(context, '/ai-recommendation');
+      }),
+      _MenuItem('Simulasi AI', Icons.auto_awesome, () {
+        Navigator.pushNamed(context, '/ai-simulator');
+      }),
+      _MenuItem('Simulasi BEP\n& Analisis', Icons.calculate, () {
+        Navigator.pushNamed(context, '/bep-simulation');
+      }),
+      _MenuItem('Trust Score\n& Risk', Icons.shield, () {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => TrustScoreScreen()));
+      }),
+      _MenuItem('EazyChise\nAcademy', Icons.school, () {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => AcademyScreen()));
+      }),
+      _MenuItem('Dashboard\nBisnis', Icons.dashboard, () {
+        Navigator.pushNamed(context, '/dashboard');
+      }),
+    ];
+
+    // Tambah menu khusus franchisor
+    if (isFranchisor) {
+      baseMenuItems.add(
+        _MenuItem('Dashboard\nCabang', Icons.account_tree_rounded, () {
+          Navigator.pushNamed(context, '/dashboard');
+        }),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('EazyChise')),
       body: GridView.count(
         crossAxisCount: 2,
         padding: const EdgeInsets.all(16),
-        children: [
-          _buildMenuCard('Marketplace\nTerverifikasi', Icons.storefront, Colors.blue, () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketplaceScreen()));
-          }),
-          _buildMenuCard('AI Business\nRecommendation', Icons.psychology, Colors.purple, () {
-            Navigator.pushNamed(context, '/ai-recommendation');
-          }),
-          _buildMenuCard('Simulasi BEP\n& Analisis', Icons.calculate, Colors.orange, () {
-            Navigator.pushNamed(context, '/bep-simulation');
-          }),
-          _buildMenuCard('Trust Score\n& Risk', Icons.shield, Colors.teal, () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => TrustScoreScreen()));
-          }),
-          _buildMenuCard('EazyChise\nAcademy', Icons.school, Colors.deepPurple, () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => AcademyScreen()));
-          }),
-          _buildMenuCard('Dashboard\nBisnis', Icons.dashboard, Colors.green, () {
-            Navigator.pushNamed(context, '/dashboard');
-          }),
-        ],
+        children: baseMenuItems
+            .map((item) => _buildMenuCard(item.title, item.icon, item.onTap, context))
+            .toList(),
       ),
     );
   }
-  
-  Widget _buildMenuCard(String title, IconData icon, Color color, VoidCallback onTap) {
+
+  Widget _buildMenuCard(String title, IconData icon, VoidCallback onTap, BuildContext context) {
     return Card(
       margin: const EdgeInsets.all(8),
+      color: AppColors.surface,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: AppColors.divider),
+      ),
       child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 48, color: color),
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: AppColors.primaryBg,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(icon, size: 26, color: AppColors.primary),
+            ),
             const SizedBox(height: 12),
-            Text(title, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+                color: AppColors.textPrimary,
+              ),
+            ),
           ],
         ),
       ),

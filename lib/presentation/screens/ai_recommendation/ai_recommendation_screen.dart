@@ -221,7 +221,7 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                 child: LinearProgressIndicator(
                   value: (_currentQuestion + 1) / _questions.length,
                   minHeight: 8,
-                  backgroundColor: Colors.grey[200],
+                  backgroundColor: AppColors.surfaceDim,
                   valueColor: AlwaysStoppedAnimation<Color>(
                     AppColors.primary,
                   ),

@@ -95,14 +95,14 @@ class FundingCard extends StatelessWidget {
               const SizedBox(height: 8),
               LinearProgressIndicator(
                 value: funding.fundedAmount / funding.amount,
-                backgroundColor: Colors.grey[200],
+                backgroundColor: AppColors.surfaceDim,
                 valueColor: AlwaysStoppedAnimation<Color>(statusColor),
               ),
               const SizedBox(height: 8),
               Text(
                 'Applied: ${DateFormat('dd MMM yyyy').format(funding.applicationDate)}',
-                style: TextStyle(
-                  color: Colors.grey[600],
+                style: const TextStyle(
+                  color: AppColors.textSub,
                   fontSize: 12,
                 ),
               ),
@@ -119,7 +119,7 @@ class FundingCard extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(color: Colors.grey[600], fontSize: 12),
+          style: const TextStyle(color: AppColors.textSub, fontSize: 12),
         ),
         const SizedBox(height: 4),
         Text(
@@ -144,7 +144,7 @@ class FundingCard extends StatelessWidget {
       case 'disbursed':
         return AppColors.info;
       default:
-        return Colors.grey;
+        return AppColors.textHint;
     }
   }
 

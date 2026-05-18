@@ -1061,7 +1061,7 @@ class _FundingScreenState extends State<FundingScreen>
                                   child: LinearProgressIndicator(
                                     value: funding.fundedAmount / funding.amount,
                                     minHeight: 8,
-                                    backgroundColor: Colors.grey[200],
+                                    backgroundColor: AppColors.surfaceDim,
                                     valueColor: AlwaysStoppedAnimation<Color>(
                                       AppColors.primary,
                                     ),
@@ -1407,7 +1407,7 @@ class _FundingScreenState extends State<FundingScreen>
       case 'disbursed':
         return AppColors.info;
       default:
-        return Colors.grey;
+        return AppColors.textHint;
     }
   }
 

@@ -13,6 +13,7 @@ import 'package:eazychise/presentation/screens/tracking/tracking_screen.dart';
 import 'package:eazychise/presentation/screens/profile/profile_screen.dart';
 import 'package:eazychise/presentation/screens/academy/academy_screen.dart';
 import 'package:eazychise/presentation/screens/trust_score_screen.dart';
+import 'package:eazychise/core/providers/notification_provider.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -161,13 +162,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
-  // Daftar warna untuk gradient card — selaras dengan AppColors
+  // Gradient cards — uses AppColors tokens only
   final List<List<Color>> _gradientColors = const [
-    [Color(0xFF1A9E5C), Color(0xFF22C55E)], // Hijau primer
-    [Color(0xFF16754A), Color(0xFF1A9E5C)], // Hijau dalam
-    [Color(0xFF22C55E), Color(0xFF86EFAC)], // Hijau mint
-    [Color(0xFFD97706), Color(0xFFF5C842)], // Emas aksen
-    [Color(0xFF0284C7), Color(0xFF38BDF8)], // Biru info
+    AppColors.grad,       // brand green
+    AppColors.gradDeep,   // deep green
+    AppColors.gradMint,   // mint green
+    AppColors.gradGold,   // warm amber
+    AppColors.gradSky,    // sky blue
   ];
 
   // Daftar ikon untuk rekomendasi
@@ -394,6 +395,41 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+                    const SizedBox(width: 12),
+                    Consumer<NotificationProvider>(
+                      builder: (context, notifProvider, child) {
+                        return Stack(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.notifications_outlined, color: AppColors.textPrimary),
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/notifications');
+                              },
+                            ),
+                            if (notifProvider.unreadCount > 0)
+                              Positioned(
+                                right: 8,
+                                top: 8,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.error,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    notifProvider.unreadCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -543,7 +579,7 @@ class HomeScreen extends StatelessWidget {
               crossAxisCount: 4,
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
-              childAspectRatio: 0.8,
+              childAspectRatio: 0.72,
               children: [
                 _buildQuickAction(
                   icon: Icons.search,
@@ -577,7 +613,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 _buildQuickAction(
                   icon: Icons.auto_awesome,
-                  label: 'AI',
+                  label: 'AI Rekom',
                   gradient: const LinearGradient(
                     colors: AppColors.gradSky,
                   ),
@@ -588,6 +624,16 @@ class HomeScreen extends StatelessWidget {
                         builder: (context) => const AIRecommendationScreen(),
                       ),
                     );
+                  },
+                ),
+                _buildQuickAction(
+                  icon: Icons.psychology,
+                  label: 'Simulasi AI',
+                  gradient: const LinearGradient(
+                    colors: AppColors.grad,
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/ai-simulator');
                   },
                 ),
                 _buildQuickAction(
@@ -609,7 +655,7 @@ class HomeScreen extends StatelessWidget {
                   icon: Icons.school,
                   label: 'Akademi',
                   gradient: const LinearGradient(
-                    colors: [Colors.purple, Colors.deepPurple],
+                    colors: AppColors.gradDeep,
                   ),
                   onTap: () {
                     Navigator.push(
@@ -624,15 +670,25 @@ class HomeScreen extends StatelessWidget {
                   icon: Icons.shield,
                   label: 'Keamanan',
                   gradient: const LinearGradient(
-                    colors: [Colors.teal, Colors.green],
+                    colors: AppColors.gradSky,
                   ),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TrustScoreScreen(),
+                        builder: (context) => const TrustScoreScreen(),
                       ),
                     );
+                  },
+                ),
+                _buildQuickAction(
+                  icon: Icons.location_on,
+                  label: 'Cek Lokasi',
+                  gradient: const LinearGradient(
+                    colors: AppColors.grad,
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/location-checker');
                   },
                 ),
               ],
@@ -951,7 +1007,7 @@ class HomeScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                             child: LinearProgressIndicator(
                               value: value,
-                              backgroundColor: Colors.grey[100]!,
+                              backgroundColor: AppColors.surfaceDim,
                               valueColor: const AlwaysStoppedAnimation<Color>(
                                 AppColors.primary,
                               ),
@@ -1160,8 +1216,10 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
                   ),

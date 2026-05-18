@@ -310,6 +310,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                       ),
                       const SizedBox(height: 8),
+                      // Badge role user
+                      _buildRoleBadge(context),
+                      const SizedBox(height: 8),
                       // Badge status verifikasi franchisor
                       _buildVerificationBadge(),
                     ],
@@ -452,6 +455,14 @@ class _ProfileScreenState extends State<ProfileScreen>
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                 final menuItems = [
+                    if (user.role == 'franchisor')
+                      {
+                        'icon': Icons.dashboard_rounded,
+                        'title': 'Dashboard Franchisor',
+                        'trailing': null,
+                        'color': AppColors.primary,
+                        'route': '/franchisor-dashboard',
+                      },
                     {
                       'icon': Icons.storefront_rounded,
                       'title': 'Daftarkan Franchise Saya',
@@ -511,14 +522,16 @@ class _ProfileScreenState extends State<ProfileScreen>
                       title: menuItems[index]['title'] as String,
                       trailing: menuItems[index]['trailing'] as String?,
                       color: menuItems[index]['color'] as Color,
-                      isVerification: menuItems[index]['isVerification'] as bool,
-                      onTap: menuItems[index]['isVerification'] == true
-                          ? _navigateToVerification
-                          : () {},
+                      isVerification: menuItems[index]['isVerification'] as bool? ?? false,
+                      onTap: menuItems[index]['route'] != null
+                          ? () => Navigator.pushNamed(context, menuItems[index]['route'] as String)
+                          : (menuItems[index]['isVerification'] == true
+                              ? _navigateToVerification
+                              : () {}),
                     ),
                   );
                 },
-                childCount: 6,
+                childCount: user.role == 'franchisor' ? 7 : 6,
               ),
             ),
           ),
@@ -850,6 +863,39 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
         );
       },
+    );
+  }
+
+  /// Badge role user (Franchisee / Franchisor)
+  Widget _buildRoleBadge(BuildContext context) {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final isFranchisor = auth.isFranchisor;
+    final label = isFranchisor ? 'Pemilik UMKM (Franchisor)' : 'Calon Franchisee';
+    final icon = isFranchisor ? Icons.store_rounded : Icons.person_rounded;
+    final color = isFranchisor ? const Color(0xFF7C3AED) : AppColors.primary;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.25)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 14),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

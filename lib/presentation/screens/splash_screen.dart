@@ -9,7 +9,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eazychise/core/constants/app_colors.dart';
+import 'package:eazychise/presentation/screens/onboarding/onboarding_screen.dart';
 
 // ─────────────────────────────────────────────────────────────
 //  DATA MODEL
@@ -70,268 +72,177 @@ class SplashScreenWave extends StatefulWidget {
 }
 
 class _SplashScreenWaveState extends State<SplashScreenWave>
-    with TickerProviderStateMixin {
-  late PageController _pageCtrl;
-  int _currentPage = 0;
-
-  // Blob morphing
-  late AnimationController _blobCtrl;
-  // Particle float
-  late AnimationController _particleCtrl;
-  // Shimmer on CTA
-  late AnimationController _shimmerCtrl;
-  // Page content stagger
-  late AnimationController _staggerCtrl;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
 
   @override
   void initState() {
     super.initState();
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
 
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light
-        .copyWith(statusBarColor: Colors.transparent));
-
-    _pageCtrl = PageController();
-
-    _blobCtrl = AnimationController(
+    _pulseCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 6),
+      duration: const Duration(milliseconds: 1200),
     )..repeat(reverse: true);
 
-    _particleCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 8),
-    )..repeat();
-
-    _shimmerCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1800),
-    )..repeat();
-
-    _staggerCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 900),
-    )..forward();
+    // Cek SharedPreferences setelah delay animasi
+    Future.delayed(const Duration(milliseconds: 2200), _checkAndNavigate);
   }
 
   @override
   void dispose() {
-    _pageCtrl.dispose();
-    _blobCtrl.dispose();
-    _particleCtrl.dispose();
-    _shimmerCtrl.dispose();
-    _staggerCtrl.dispose();
+    _pulseCtrl.dispose();
     super.dispose();
   }
 
-  void _goNext() {
-    HapticFeedback.lightImpact();
-    if (_currentPage < _pages.length - 1) {
-      _pageCtrl.nextPage(
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOutCubic,
+  Future<void> _checkAndNavigate() async {
+    if (!mounted) return;
+    final prefs = await SharedPreferences.getInstance();
+    final onboardingDone = prefs.getBool('onboarding_done') ?? false;
+
+    if (!mounted) return;
+
+    if (!onboardingDone) {
+      // Pertama kali install → tampilkan onboarding
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => const OnboardingScreen(),
+          transitionsBuilder: (_, anim, __, child) =>
+              FadeTransition(opacity: anim, child: child),
+          transitionDuration: const Duration(milliseconds: 500),
+        ),
       );
     } else {
+      // Sudah pernah onboarding → langsung ke login
       Navigator.pushReplacementNamed(context, '/login');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final page = _pages[_currentPage];
-
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light
-          .copyWith(statusBarColor: Colors.transparent),
-      child: Scaffold(
-        body: AnimatedContainer(
-          duration: const Duration(milliseconds: 600),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: page.gradientColors,
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF0D5C36), Color(0xFF16A34A)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          child: Stack(
-            children: [
-              // ── Layer 1: Morphing blob ─────────────────────
-              _BlobBackground(animation: _blobCtrl),
-
-              // ── Layer 2: Floating particles ────────────────
-              _ParticleField(animation: _particleCtrl),
-
-              // ── Layer 3: Radial glow (bottom centre) ───────
-              Positioned(
-                bottom: -100,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: 400,
-                  decoration: BoxDecoration(
-                    gradient: RadialGradient(
-                      colors: [
-                        AppColors.accentLight.withOpacity(0.18),
-                        Colors.transparent,
-                      ],
-                      radius: 0.7,
-                    ),
-                  ),
-                ),
+        ),
+        child: Stack(
+          children: [
+            // Background blob
+            AnimatedBuilder(
+              animation: _pulseCtrl,
+              builder: (_, __) => CustomPaint(
+                painter: _BlobPainter(progress: _pulseCtrl.value),
+                size: Size.infinite,
               ),
+            ),
 
-              // ── Layer 4: Content ───────────────────────────
-              SafeArea(
+            // Center logo content
+            Center(
+              child: AnimatedBuilder(
+                animation: _pulseCtrl,
+                builder: (_, child) {
+                  final scale = 1.0 +
+                      Tween<double>(begin: 0.0, end: 0.04)
+                          .evaluate(CurvedAnimation(
+                        parent: _pulseCtrl,
+                        curve: Curves.easeInOut,
+                      ));
+                  return Transform.scale(
+                    scale: scale,
+                    child: child,
+                  );
+                },
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildTopBar(context),
-                    Expanded(
-                      child: PageView.builder(
-                        controller: _pageCtrl,
-                        onPageChanged: (i) {
-                          setState(() => _currentPage = i);
-                          _staggerCtrl.forward(from: 0);
-                        },
-                        itemCount: _pages.length,
-                        itemBuilder: (ctx, i) =>
-                            _PageContent(
-                              data: _pages[i],
-                              stagger: _staggerCtrl,
-                            ),
+                    // Logo card
+                    Container(
+                      width: 96,
+                      height: 96,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.18),
+                        borderRadius: BorderRadius.circular(28),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.35),
+                          width: 1.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 30,
+                            offset: const Offset(0, 12),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.storefront_rounded,
+                        color: Colors.white,
+                        size: 48,
                       ),
                     ),
-                    _buildBottomBar(),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'EazyChise',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 36,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1.0,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Franchise Terpercaya, Satu Platform',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.65),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ── TOP BAR ───────────────────────────────────────────────
-  Widget _buildTopBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 16, 0),
-      child: Row(
-        children: [
-          // Logo pill
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: Colors.white.withOpacity(0.2)),
             ),
-            child: Row(
-              children: [
-                Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.storefront_rounded,
-                      color: AppColors.primary, size: 17),
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  'EazyChise',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 15,
-                    letterSpacing: 0.3,
-                  ),
-                ),
-              ],
-            ),
-          ),
 
-          const Spacer(),
-
-          // Skip
-          TextButton(
-            onPressed: () =>
-                Navigator.pushReplacementNamed(context, '/login'),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.white.withOpacity(0.7),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            ),
-            child: const Text(
-              'Lewati →',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.3,
+            // Loading dots at bottom
+            Positioned(
+              bottom: 60,
+              left: 0,
+              right: 0,
+              child: AnimatedBuilder(
+                animation: _pulseCtrl,
+                builder: (_, __) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(3, (i) {
+                      final opacity = ((_pulseCtrl.value * 3 - i) % 1.0).clamp(0.0, 1.0);
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withOpacity(0.3 + opacity * 0.7),
+                        ),
+                      );
+                    }),
+                  );
+                },
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ── BOTTOM BAR ────────────────────────────────────────────
-  Widget _buildBottomBar() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 36),
-      child: Column(
-        children: [
-          // ── Progress dots ────────────────────────────────
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(_pages.length, (i) {
-              final sel = i == _currentPage;
-              return GestureDetector(
-                onTap: () {
-                  _pageCtrl.animateToPage(i,
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeOutCubic);
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 350),
-                  curve: Curves.easeOutCubic,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: sel ? 28 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: sel
-                        ? Colors.white
-                        : Colors.white.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              );
-            }),
-          ),
-
-          const SizedBox(height: 28),
-
-          // ── CTA Button ────────────────────────────────────
-          _ShimmerButton(
-            shimmer: _shimmerCtrl,
-            label: _currentPage == _pages.length - 1
-                ? 'Mulai Sekarang 🚀'
-                : 'Lanjutkan',
-            onTap: _goNext,
-          ),
-
-          const SizedBox(height: 16),
-
-          // ── Step counter ──────────────────────────────────
-          Text(
-            '${_currentPage + 1} dari ${_pages.length}',
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.45),
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
