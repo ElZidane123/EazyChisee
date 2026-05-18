@@ -11,6 +11,8 @@ import 'package:eazychise/presentation/screens/bep_simulation/bep_simulation_scr
 import 'package:eazychise/presentation/screens/funding/funding_screen.dart';
 import 'package:eazychise/presentation/screens/tracking/tracking_screen.dart';
 import 'package:eazychise/presentation/screens/profile/profile_screen.dart';
+import 'package:eazychise/presentation/screens/academy/academy_screen.dart';
+import 'package:eazychise/presentation/screens/trust_score_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -599,6 +601,36 @@ class HomeScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => const TrackingScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _buildQuickAction(
+                  icon: Icons.school,
+                  label: 'Akademi',
+                  gradient: const LinearGradient(
+                    colors: [Colors.purple, Colors.deepPurple],
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AcademyScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _buildQuickAction(
+                  icon: Icons.shield,
+                  label: 'Keamanan',
+                  gradient: const LinearGradient(
+                    colors: [Colors.teal, Colors.green],
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TrustScoreScreen(),
                       ),
                     );
                   },

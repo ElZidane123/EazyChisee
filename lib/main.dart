@@ -18,6 +18,8 @@ import 'package:eazychise/presentation/screens/tracking/tracking_screen.dart';
 import 'package:eazychise/presentation/screens/profile/profile_screen.dart';
 import 'package:eazychise/presentation/screens/verification/franchise_verification_screen.dart';
 import 'package:eazychise/presentation/screens/verification/verification_status_screen.dart';
+import 'package:eazychise/presentation/screens/trust_score_screen.dart';
+import 'package:eazychise/presentation/screens/academy/academy_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -44,6 +46,7 @@ class MyApp extends StatelessWidget {
           '/': (context) => const SplashScreenWave(),
           '/login': (context) => const LoginScreen(),
           '/register': (context) => const RegisterScreen(),
+          '/home': (context) => HomeScreen(),
           '/dashboard': (context) => const DashboardScreen(),
           '/marketplace': (context) => const MarketplaceScreen(),
           '/ai-recommendation': (context) => const AIRecommendationScreen(),
@@ -247,3 +250,55 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('EazyChise')),
+      body: GridView.count(
+        crossAxisCount: 2,
+        padding: const EdgeInsets.all(16),
+        children: [
+          _buildMenuCard('Marketplace\nTerverifikasi', Icons.storefront, Colors.blue, () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketplaceScreen()));
+          }),
+          _buildMenuCard('AI Business\nRecommendation', Icons.psychology, Colors.purple, () {
+            Navigator.pushNamed(context, '/ai-recommendation');
+          }),
+          _buildMenuCard('Simulasi BEP\n& Analisis', Icons.calculate, Colors.orange, () {
+            Navigator.pushNamed(context, '/bep-simulation');
+          }),
+          _buildMenuCard('Trust Score\n& Risk', Icons.shield, Colors.teal, () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => TrustScoreScreen()));
+          }),
+          _buildMenuCard('EazyChise\nAcademy', Icons.school, Colors.deepPurple, () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => AcademyScreen()));
+          }),
+          _buildMenuCard('Dashboard\nBisnis', Icons.dashboard, Colors.green, () {
+            Navigator.pushNamed(context, '/dashboard');
+          }),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildMenuCard(String title, IconData icon, Color color, VoidCallback onTap) {
+    return Card(
+      margin: const EdgeInsets.all(8),
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 48, color: color),
+            const SizedBox(height: 12),
+            Text(title, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+    );
+  }
+}

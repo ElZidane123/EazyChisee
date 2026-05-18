@@ -14,6 +14,18 @@ class FranchiseCard extends StatelessWidget {
     required this.onTap,
   });
 
+  Color _getTrustColor(int score) {
+    if (score >= 85) return Colors.teal;
+    if (score >= 70) return Colors.orange;
+    return Colors.red;
+  }
+
+  Color _getRiskColor(String risk) {
+    if (risk == 'Low') return Colors.green;
+    if (risk == 'Medium') return Colors.orange;
+    return Colors.red;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<FranchiseProvider>(
@@ -193,6 +205,56 @@ class FranchiseCard extends StatelessWidget {
                                 ],
                               ),
                             ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _getTrustColor(franchise.trustScore).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.shield,
+                                    size: 12,
+                                    color: _getTrustColor(franchise.trustScore),
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    '${franchise.trustScore}',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: _getTrustColor(franchise.trustScore),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (franchise.riskPrediction.isNotEmpty) ...[
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _getRiskColor(franchise.riskPrediction).withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  franchise.riskPrediction,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: _getRiskColor(franchise.riskPrediction),
+                                  ),
+                                ),
+                              ),
+                            ]
                           ],
                         ),
                         const SizedBox(height: 8),

@@ -14,6 +14,8 @@ class FranchiseModel {
   final String foundedYear;
   final bool isRecommended;
   final bool isVerified;
+  final int trustScore;
+  final String riskPrediction;
 
   FranchiseModel({
     required this.id,
@@ -31,6 +33,8 @@ class FranchiseModel {
     required this.foundedYear,
     required this.isRecommended,
     this.isVerified = false,
+    this.trustScore = 0,
+    this.riskPrediction = 'Medium',
   });
 
   static List<FranchiseModel> dummyData() {
@@ -51,6 +55,8 @@ class FranchiseModel {
         foundedYear: '2017',
         isRecommended: true,
         isVerified: true,
+        trustScore: 92,
+        riskPrediction: 'Low',
       ),
       FranchiseModel(
         id: '2',
@@ -68,6 +74,8 @@ class FranchiseModel {
         foundedYear: '2016',
         isRecommended: true,
         isVerified: true,
+        trustScore: 88,
+        riskPrediction: 'Low',
       ),
       FranchiseModel(
         id: '3',
@@ -84,6 +92,8 @@ class FranchiseModel {
         totalOutlets: 200,
         foundedYear: '2013',
         isRecommended: false,
+        trustScore: 75,
+        riskPrediction: 'Medium',
       ),
       FranchiseModel(
         id: '4',
@@ -100,6 +110,8 @@ class FranchiseModel {
         totalOutlets: 18000,
         foundedYear: '1988',
         isRecommended: false,
+        trustScore: 96,
+        riskPrediction: 'Low',
       ),
       FranchiseModel(
         id: '5',
@@ -117,6 +129,8 @@ class FranchiseModel {
         foundedYear: '2006',
         isRecommended: true,
         isVerified: true,
+        trustScore: 85,
+        riskPrediction: 'Medium',
       ),
     ];
   }

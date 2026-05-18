@@ -1677,3 +1677,114 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
     );
   }
 }
+
+class VerifiedMarketplaceScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Marketplace Franchise Terverifikasi'),
+        backgroundColor: Colors.green[700],
+      ),
+      body: Column(
+        children: [
+          // Filter section
+          Container(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField(
+                    hint: Text('Kategori'),
+                    items: ['Makanan', 'Minuman', 'Jasa', 'Retail', 'Pendidikan']
+                        .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
+                        .toList(),
+                    onChanged: (value) {},
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: DropdownButtonFormField(
+                    hint: Text('Range Investasi'),
+                    items: ['< 50jt', '50-100jt', '100-500jt', '> 500jt']
+                        .map((range) => DropdownMenuItem(value: range, child: Text(range)))
+                        .toList(),
+                    onChanged: (value) {},
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // Verified franchise list
+          Expanded(
+            child: ListView.builder(
+              itemCount: 10,
+              itemBuilder: (context, index) {
+                return Card(
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: ListTile(
+                    leading: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(Icons.store, size: 40),
+                    ),
+                    title: Row(
+                      children: [
+                        Text('Franchise Name ${index + 1}'),
+                        SizedBox(width: 8),
+                        Icon(Icons.verified, color: Colors.blue, size: 20),
+                        SizedBox(width: 4),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text('TERVERIFIKASI', 
+                            style: TextStyle(color: Colors.white, fontSize: 10)),
+                        ),
+                      ],
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Investasi: Rp ${(index + 1) * 100}jt'),
+                        Text('ROI: ${(index + 1) * 15}%'),
+                        _buildTrustScore(75 + index),
+                      ],
+                    ),
+                    trailing: ElevatedButton(
+                      child: Text('Lihat Detail'),
+                      onPressed: () {},
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildTrustScore(int score) {
+    return Row(
+      children: [
+        Text('Trust Score: ', style: TextStyle(fontSize: 12)),
+        LinearProgressIndicator(
+          value: score / 100,
+          backgroundColor: Colors.grey[300],
+          color: score >= 80 ? Colors.green : (score >= 60 ? Colors.orange : Colors.red),
+          minHeight: 8,
+        ),
+        SizedBox(width: 8),
+        Text('$score', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+      ],
+    );
+  }
+}
