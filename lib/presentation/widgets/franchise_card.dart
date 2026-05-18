@@ -30,10 +30,13 @@ class FranchiseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<FranchiseProvider>(
       builder: (context, provider, child) {
-        return Card(
+        return Container(
           margin: const EdgeInsets.only(bottom: 12),
-          shape: RoundedRectangleBorder(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
             borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.border, width: 1),
+            boxShadow: AppColors.shadowSm,
           ),
           child: InkWell(
             onTap: onTap,
@@ -42,24 +45,17 @@ class FranchiseCard extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  // Logo
+                  // Image
                   Container(
                     width: 80,
                     height: 100,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primaryBg,
                       borderRadius: BorderRadius.circular(12),
                       image: DecorationImage(
                         image: NetworkImage(franchise.images),
                         fit: BoxFit.cover,
                       ),
-                    ),
-                    child: Center(
-                      // child: Icon(
-                      //   Icons.store,
-                      //   size: 40,
-                      //   color: AppColors.primary.withOpacity(0.5),
-                      // ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -74,8 +70,9 @@ class FranchiseCard extends StatelessWidget {
                               child: Text(
                                 franchise.name,
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 15,
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
                             ),
@@ -83,33 +80,28 @@ class FranchiseCard extends StatelessWidget {
                               Container(
                                 margin: const EdgeInsets.only(left: 4),
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 7,
-                                  vertical: 3,
+                                  horizontal: 8,
+                                  vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: AppColors.grad,
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
+                                  color: AppColors.primaryBg,
                                   borderRadius: BorderRadius.circular(6),
                                 ),
-                                child: const Row(
+                                child: Row(
                                   mainAxisSize: MainAxisSize.min,
-                                  children: [
+                                  children: const [
                                     Icon(
                                       Icons.verified_rounded,
-                                      color: Colors.white,
-                                      size: 10,
+                                      color: AppColors.primary,
+                                      size: 12,
                                     ),
                                     SizedBox(width: 3),
                                     Text(
-                                      'Terverifikasi',
+                                      'Verified',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: AppColors.primary,
                                         fontSize: 9,
                                         fontWeight: FontWeight.w700,
-                                        letterSpacing: 0.2,
                                       ),
                                     ),
                                   ],
@@ -123,13 +115,13 @@ class FranchiseCard extends StatelessWidget {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.accent.withOpacity(0.12),
+                                  color: AppColors.goldBg,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: const Text(
-                                  'AI Pick',
+                                  'Pick',
                                   style: TextStyle(
-                                    color: AppColors.accent,
+                                    color: AppColors.gold,
                                     fontSize: 9,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -141,7 +133,7 @@ class FranchiseCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           franchise.category,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.textSub,
                             fontSize: 12,
                           ),
@@ -152,17 +144,17 @@ class FranchiseCard extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,
-                                vertical: 2,
+                                vertical: 3,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.success.withOpacity(0.1),
+                                color: AppColors.successBg,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Row(
                                 children: [
                                   const Icon(
                                     Icons.trending_up,
-                                    size: 12,
+                                    size: 10,
                                     color: AppColors.success,
                                   ),
                                   const SizedBox(width: 2),
@@ -170,63 +162,70 @@ class FranchiseCard extends StatelessWidget {
                                     '${franchise.roi}%',
                                     style: const TextStyle(
                                       color: AppColors.success,
-                                      fontSize: 10,
+                                      fontSize: 9,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 6),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,
-                                vertical: 2,
+                                vertical: 3,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.info.withOpacity(0.1),
+                                color: AppColors.surface,
+                                border: Border.all(
+                                  color: AppColors.border,
+                                  width: 1,
+                                ),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Row(
                                 children: [
                                   const Icon(
-                                    Icons.star,
-                                    size: 12,
-                                    color: AppColors.warning,
+                                    Icons.star_rounded,
+                                    size: 10,
+                                    color: AppColors.gold,
                                   ),
                                   const SizedBox(width: 2),
                                   Text(
                                     franchise.rating.toString(),
                                     style: const TextStyle(
-                                      fontSize: 10,
+                                      color: AppColors.textPrimary,
+                                      fontSize: 9,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 6),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,
-                                vertical: 2,
+                                vertical: 3,
                               ),
                               decoration: BoxDecoration(
-                                color: _getTrustColor(franchise.trustScore).withOpacity(0.1),
+                                color: _getTrustColor(franchise.trustScore)
+                                    .withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Row(
                                 children: [
                                   Icon(
-                                    Icons.shield,
-                                    size: 12,
-                                    color: _getTrustColor(franchise.trustScore),
+                                    Icons.shield_rounded,
+                                    size: 10,
+                                    color:
+                                        _getTrustColor(franchise.trustScore),
                                   ),
                                   const SizedBox(width: 2),
                                   Text(
                                     '${franchise.trustScore}',
                                     style: TextStyle(
-                                      fontSize: 10,
+                                      fontSize: 9,
                                       fontWeight: FontWeight.bold,
                                       color: _getTrustColor(franchise.trustScore),
                                     ),
@@ -234,27 +233,6 @@ class FranchiseCard extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            if (franchise.riskPrediction.isNotEmpty) ...[
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: _getRiskColor(franchise.riskPrediction).withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  franchise.riskPrediction,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: _getRiskColor(franchise.riskPrediction),
-                                  ),
-                                ),
-                              ),
-                            ]
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -264,7 +242,7 @@ class FranchiseCard extends StatelessWidget {
                             Text(
                               'Rp ${(franchise.investmentMin / 1000000).toStringAsFixed(0)}Jt - ${(franchise.investmentMax / 1000000).toStringAsFixed(0)}Jt',
                               style: const TextStyle(
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w700,
                                 color: AppColors.primary,
                                 fontSize: 12,
                               ),
@@ -272,16 +250,18 @@ class FranchiseCard extends StatelessWidget {
                             IconButton(
                               icon: Icon(
                                 provider.isBookmarked(franchise)
-                                    ? Icons.bookmark
-                                    : Icons.bookmark_border,
+                                    ? Icons.bookmark_rounded
+                                    : Icons.bookmark_border_rounded,
                                 color: provider.isBookmarked(franchise)
                                     ? AppColors.primary
                                     : AppColors.textHint,
-                                size: 20,
+                                size: 18,
                               ),
                               onPressed: () {
                                 provider.toggleBookmark(franchise);
                               },
+                              constraints: BoxConstraints.tight(Size(32, 32)),
+                              padding: EdgeInsets.zero,
                             ),
                           ],
                         ),

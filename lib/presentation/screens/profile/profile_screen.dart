@@ -64,272 +64,158 @@ class _ProfileScreenState extends State<ProfileScreen>
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          // Modern App Bar
-          SliverAppBar(
-            expandedHeight: 200,
-            floating: true,
-            pinned: true,
-            backgroundColor: AppColors.surface,
-            elevation: 0,
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: EdgeInsets.zero,
-              title: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                padding: const EdgeInsets.only(left: 20, bottom: 16),
-                child: const Text(
-                  'Profil Saya',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-              ),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.primary.withOpacity(0.1),
-                      AppColors.accent.withOpacity(0.1),
-                      Colors.transparent,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Stack(
-                  children: [
-                    // Decorative Circles
-                    Positioned(
-                      right: -50,
-                      top: -50,
-                      child: Container(
-                        width: 200,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.primary.withOpacity(0.05),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      left: -30,
-                      bottom: -30,
-                      child: Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.accent.withOpacity(0.05),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            actions: [
-              // Edit Button
-              Container(
-                margin: const EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    transitionBuilder: (child, anim) => RotationTransition(
-                      turns: child.key == const ValueKey('edit') 
-                          ? Tween<double>(begin: 0, end: 1).animate(anim)
-                          : Tween<double>(begin: 1, end: 0).animate(anim),
-                      child: ScaleTransition(scale: anim, child: child),
-                    ),
-                    child: _isEditing
-                        ? const Icon(Icons.check_rounded, key: ValueKey('check'))
-                        : const Icon(Icons.edit_rounded, key: ValueKey('edit')),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = !_isEditing;
-                    });
-                    
-                    if (!_isEditing) {
-                      // Save changes
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text('Profil berhasil diperbarui'),
-                          backgroundColor: AppColors.success,
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          margin: const EdgeInsets.all(20),
-                        ),
-                      );
-                    }
-                  },
-                  color: _isEditing ? AppColors.success : AppColors.primary,
-                ),
-              ),
-            ],
+      backgroundColor: AppColors.bg,
+      appBar: AppBar(
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        shape: const Border(bottom: BorderSide(color: AppColors.border, width: 1)),
+        title: const Text(
+          'Profil Saya',
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+            fontSize: 17,
           ),
-
-          // Profile Header
-          SliverToBoxAdapter(
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    // Avatar dengan Animasi
-                    Stack(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: [AppColors.primary, AppColors.accent],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withOpacity(0.3),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: CircleAvatar(
-                            radius: 60,
-                            backgroundColor: Colors.transparent,
-                            backgroundImage: user.photoUrl != null
-                                ? NetworkImage(user.photoUrl!)
-                                : null,
-                            child: user.photoUrl == null
-                                ? Text(
-                                    user.name[0].toUpperCase(),
-                                    style: const TextStyle(
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : null,
-                          ),
-                        ),
-                        if (_isEditing)
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: GestureDetector(
-                              onTap: () {
-                                // Change photo
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [AppColors.primary, AppColors.accent],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.primary.withOpacity(0.3),
-                                      blurRadius: 10,
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Icons.camera_alt_rounded,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              _isEditing ? Icons.check_rounded : Icons.edit_rounded,
+              color: _isEditing ? AppColors.success : AppColors.primary,
+            ),
+            onPressed: () {
+              setState(() {
+                _isEditing = !_isEditing;
+              });
+              
+              if (!_isEditing) {
+                // Save changes
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Profil berhasil diperbarui'),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    const SizedBox(height: 16),
-                    
-                    // Name and Email (non-editing mode)
-                    if (!_isEditing) ...[
-                      Text(
-                        user.name,
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.email_outlined,
-                              size: 14,
-                              color: AppColors.primary,
+                    margin: const EdgeInsets.all(20),
+                  ),
+                );
+              }
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                // Profile Header Card
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.border),
+                    boxShadow: AppColors.shadowSm,
+                  ),
+                  child: Column(
+                    children: [
+                      // Avatar
+                      Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: AppColors.border, width: 2),
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              user.email,
-                              style: TextStyle(
-                                color: AppColors.primary,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundColor: AppColors.surfaceDim,
+                              backgroundImage: user.photoUrl != null
+                                  ? NetworkImage(user.photoUrl!)
+                                  : null,
+                              child: user.photoUrl == null
+                                  ? Text(
+                                      user.name[0].toUpperCase(),
+                                      style: const TextStyle(
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primary,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                          ),
+                          if (_isEditing)
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Change photo
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: AppColors.surface, width: 2),
+                                  ),
+                                  child: const Icon(
+                                    Icons.camera_alt_rounded,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                ),
                               ),
                             ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      if (!_isEditing) ...[
+                        Text(
+                          user.name,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          user.email,
+                          style: const TextStyle(
+                            color: AppColors.textSub,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          alignment: WrapAlignment.center,
+                          children: [
+                            _buildRoleBadge(context),
+                            _buildVerificationBadge(),
                           ],
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      // Badge role user
-                      _buildRoleBadge(context),
-                      const SizedBox(height: 8),
-                      // Badge status verifikasi franchisor
-                      _buildVerificationBadge(),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ),
+                const SizedBox(height: 20),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 8)),
-
-          // Edit Form
-          if (_isEditing)
-            SliverPadding(
-              padding: const EdgeInsets.all(20),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
+                // Edit Form fields (if editing)
+                if (_isEditing) ...[
                   _buildEditableField(
                     'Nama Lengkap',
                     _nameController,
@@ -349,175 +235,149 @@ class _ProfileScreenState extends State<ProfileScreen>
                     Icons.phone_outlined,
                     keyboardType: TextInputType.phone,
                   ),
-                  const SizedBox(height: 8),
-                ]),
-              ),
-            ),
+                  const SizedBox(height: 20),
+                ],
 
-          // Stats Cards
-          SliverPadding(
-            padding: const EdgeInsets.all(20),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(25),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.03),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildStatItem(
-                                'Franchise Aktif',
-                                user.activeFranchises.toString(),
-                                Icons.storefront_rounded,
-                                AppColors.primary,
-                              ),
+                // Stats Cards
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.border),
+                    boxShadow: AppColors.shadowSm,
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildStatItem(
+                              'Franchise Aktif',
+                              user.activeFranchises.toString(),
+                              Icons.storefront_rounded,
+                              AppColors.primary,
                             ),
-                            Container(
-                              height: 50,
-                              width: 1,
-                              color: AppColors.textHint.withOpacity(0.2),
+                          ),
+                          Container(
+                            height: 40,
+                            width: 1,
+                            color: AppColors.border,
+                          ),
+                          Expanded(
+                            child: _buildStatItem(
+                              'Total Investasi',
+                              'Rp ${(user.totalInvestment / 1000000).toStringAsFixed(0)}Jt',
+                              Icons.trending_up_rounded,
+                              AppColors.success,
                             ),
-                            Expanded(
-                              child: _buildStatItem(
-                                'Total Investasi',
-                                'Rp ${(user.totalInvestment / 1000000).toStringAsFixed(0)}Jt',
-                                Icons.trending_up_rounded,
-                                AppColors.success,
-                              ),
+                          ),
+                        ],
+                      ),
+                      const Divider(height: 24, color: AppColors.border),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildStatItem(
+                              'Tingkat Sukses',
+                              '92%',
+                              Icons.analytics_rounded,
+                              AppColors.warning,
                             ),
-                          ],
-                        ),
-                        const Divider(height: 32, color: Color.fromARGB(255, 210, 210, 210),),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildStatItem(
-                                'Tingkat Sukses',
-                                '92%',
-                                Icons.analytics_rounded,
-                                AppColors.warning,
-                              ),
+                          ),
+                          Container(
+                            height: 40,
+                            width: 1,
+                            color: AppColors.border,
+                          ),
+                          Expanded(
+                            child: _buildStatItem(
+                              'Member Sejak',
+                              '2024',
+                              Icons.calendar_today_rounded,
+                              AppColors.accent,
                             ),
-                            Container(
-                              height: 50,
-                              width: 1,
-                              color: AppColors.textHint.withOpacity(0.2),
-                            ),
-                            Expanded(
-                              child: _buildStatItem(
-                                'Member Sejak',
-                                '2024',
-                                Icons.calendar_today_rounded,
-                                AppColors.accent,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 24),
 
-                // Section Title
-                const Text(
-                  'Pengaturan Akun',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                    letterSpacing: -0.5,
+                // Section Title: Pengaturan
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Pengaturan Akun',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                      letterSpacing: -0.5,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 16),
-              ]),
-            ),
-          ),
+                const SizedBox(height: 12),
 
-          // Menu Items
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                final menuItems = [
-                    if (user.role == 'franchisor')
+                // Menu list items
+                ...List.generate(
+                  user.role == 'franchisor' ? 7 : 6,
+                  (index) {
+                    final menuItems = [
+                      if (user.role == 'franchisor')
+                        {
+                          'icon': Icons.dashboard_rounded,
+                          'title': 'Dashboard Franchisor',
+                          'trailing': null,
+                          'color': AppColors.primary,
+                          'route': '/franchisor-dashboard',
+                        },
                       {
-                        'icon': Icons.dashboard_rounded,
-                        'title': 'Dashboard Franchisor',
+                        'icon': Icons.storefront_rounded,
+                        'title': 'Daftarkan Franchise Saya',
                         'trailing': null,
                         'color': AppColors.primary,
-                        'route': '/franchisor-dashboard',
+                        'isVerification': true,
                       },
-                    {
-                      'icon': Icons.storefront_rounded,
-                      'title': 'Daftarkan Franchise Saya',
-                      'trailing': null,
-                      'color': AppColors.primary,
-                      'isVerification': true,
-                    },
-                    {
-                      'icon': Icons.bookmark_rounded,
-                      'title': 'Franchise Tersimpan',
-                      'trailing': '12',
-                      'color': AppColors.accent,
-                      'isVerification': false,
-                    },
-                    {
-                      'icon': Icons.notifications_rounded,
-                      'title': 'Notifikasi',
-                      'trailing': '3',
-                      'color': AppColors.warning,
-                      'isVerification': false,
-                    },
-                    {
-                      'icon': Icons.security_rounded,
-                      'title': 'Privasi & Keamanan',
-                      'trailing': null,
-                      'color': AppColors.success,
-                      'isVerification': false,
-                    },
-                    {
-                      'icon': Icons.help_rounded,
-                      'title': 'Pusat Bantuan',
-                      'trailing': null,
-                      'color': AppColors.info,
-                      'isVerification': false,
-                    },
-                    {
-                      'icon': Icons.info_rounded,
-                      'title': 'Tentang Aplikasi',
-                      'trailing': null,
-                      'color': AppColors.textSub,
-                      'isVerification': false,
-                    },
-                  ];
+                      {
+                        'icon': Icons.bookmark_rounded,
+                        'title': 'Franchise Tersimpan',
+                        'trailing': '12',
+                        'color': AppColors.accent,
+                        'isVerification': false,
+                      },
+                      {
+                        'icon': Icons.notifications_rounded,
+                        'title': 'Notifikasi',
+                        'trailing': '3',
+                        'color': AppColors.warning,
+                        'isVerification': false,
+                      },
+                      {
+                        'icon': Icons.security_rounded,
+                        'title': 'Privasi & Keamanan',
+                        'trailing': null,
+                        'color': AppColors.success,
+                        'isVerification': false,
+                      },
+                      {
+                        'icon': Icons.help_rounded,
+                        'title': 'Pusat Bantuan',
+                        'trailing': null,
+                        'color': AppColors.info,
+                        'isVerification': false,
+                      },
+                      {
+                        'icon': Icons.info_rounded,
+                        'title': 'Tentang Aplikasi',
+                        'trailing': null,
+                        'color': AppColors.textSub,
+                        'isVerification': false,
+                      },
+                    ];
 
-                  return TweenAnimationBuilder(
-                    duration: Duration(milliseconds: 500 + (index * 50)),
-                    tween: Tween<double>(begin: 0, end: 1),
-                    curve: Curves.easeOutCubic,
-                    builder: (context, double value, child) {
-                      return Transform.translate(
-                        offset: Offset(20 * (1 - value), 0),
-                        child: Opacity(opacity: value, child: child),
-                      );
-                    },
-                    child: _buildMenuItem(
+                    return _buildMenuItem(
                       icon: menuItems[index]['icon'] as IconData,
                       title: menuItems[index]['title'] as String,
                       trailing: menuItems[index]['trailing'] as String?,
@@ -528,55 +388,34 @@ class _ProfileScreenState extends State<ProfileScreen>
                           : (menuItems[index]['isVerification'] == true
                               ? _navigateToVerification
                               : () {}),
-                    ),
-                  );
-                },
-                childCount: user.role == 'franchisor' ? 7 : 6,
-              ),
-            ),
-          ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-          // Logout Button
-          SliverPadding(
-            padding: const EdgeInsets.all(20),
-            sliver: SliverToBoxAdapter(
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: ElevatedButton(
+                // Logout Button
+                OutlinedButton.icon(
                   onPressed: _showLogoutDialog,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    foregroundColor: AppColors.error,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: const BorderSide(color: AppColors.error),
-                    ),
+                  icon: const Icon(Icons.logout_rounded, size: 18),
+                  label: const Text(
+                    'Keluar Akun',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.logout_rounded),
-                      SizedBox(width: 8),
-                      Text(
-                        'Keluar',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.error,
+                    side: const BorderSide(color: AppColors.error, width: 1.5),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    minimumSize: const Size(double.infinity, 48),
                   ),
                 ),
-              ),
+                const SizedBox(height: 20),
+              ],
             ),
           ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 20)),
-        ],
+        ),
       ),
     );
   }
@@ -588,50 +427,36 @@ class _ProfileScreenState extends State<ProfileScreen>
     bool enabled = true,
     TextInputType keyboardType = TextInputType.text,
   }) {
-    return TweenAnimationBuilder(
-      duration: const Duration(milliseconds: 400),
-      tween: Tween<double>(begin: 0, end: 1),
-      curve: Curves.easeOutCubic,
-      builder: (context, double value, child) {
-        return Transform.translate(
-          offset: Offset(0, 20 * (1 - value)),
-          child: Opacity(opacity: value, child: child),
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.background,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.textHint.withOpacity(0.2),
-          ),
+    return TextFormField(
+      controller: controller,
+      enabled: enabled,
+      keyboardType: keyboardType,
+      style: const TextStyle(
+        color: AppColors.textPrimary,
+        fontSize: 15,
+      ),
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(
+          icon,
+          color: enabled ? AppColors.primary : AppColors.textHint,
+          size: 20,
         ),
-        child: TextFormField(
-          controller: controller,
-          enabled: enabled,
-          keyboardType: keyboardType,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 15,
-          ),
-          decoration: InputDecoration(
-            labelText: label,
-            labelStyle: TextStyle(
-              color: enabled ? AppColors.textSecondary : AppColors.textHint,
-            ),
-            prefixIcon: Icon(
-              icon,
-              color: enabled ? AppColors.primary : AppColors.textHint,
-              size: 22,
-            ),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-            floatingLabelBehavior: FloatingLabelBehavior.auto,
-          ),
+        filled: true,
+        fillColor: enabled ? AppColors.bg : AppColors.surfaceDim,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
         ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
     );
   }
@@ -642,16 +467,16 @@ class _ProfileScreenState extends State<ProfileScreen>
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withOpacity(0.08),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: color, size: 22),
+          child: Icon(icon, color: color, size: 20),
         ),
         const SizedBox(height: 8),
         Text(
           value,
           style: const TextStyle(
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.w700,
             color: AppColors.textPrimary,
             letterSpacing: -0.5,
@@ -660,8 +485,8 @@ class _ProfileScreenState extends State<ProfileScreen>
         const SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
-            color: AppColors.textSecondary,
+          style: const TextStyle(
+            color: AppColors.textSub,
             fontSize: 11,
             fontWeight: FontWeight.w500,
           ),
@@ -684,20 +509,10 @@ class _ProfileScreenState extends State<ProfileScreen>
         color: isVerification ? AppColors.primaryBg : AppColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isVerification
-              ? AppColors.primary.withOpacity(0.3)
-              : color.withOpacity(0.1),
-          width: isVerification ? 1.5 : 1,
+          color: isVerification ? AppColors.primary.withOpacity(0.3) : AppColors.border,
+          width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: isVerification
-                ? AppColors.primary.withOpacity(0.08)
-                : Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: AppColors.shadowSm,
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(
@@ -707,15 +522,12 @@ class _ProfileScreenState extends State<ProfileScreen>
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            gradient: isVerification
-                ? const LinearGradient(colors: AppColors.grad)
-                : null,
-            color: isVerification ? null : color.withOpacity(0.1),
+            color: isVerification ? AppColors.primary.withOpacity(0.1) : color.withOpacity(0.08),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
             icon,
-            color: isVerification ? Colors.white : color,
+            color: isVerification ? AppColors.primary : color,
             size: 20,
           ),
         ),
@@ -723,7 +535,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           title,
           style: TextStyle(
             fontSize: 15,
-            fontWeight: isVerification ? FontWeight.w700 : FontWeight.w500,
+            fontWeight: isVerification ? FontWeight.w600 : FontWeight.w500,
             color: isVerification ? AppColors.primary : AppColors.textPrimary,
           ),
         ),
@@ -738,21 +550,17 @@ class _ProfileScreenState extends State<ProfileScreen>
             : null,
         trailing: trailing != null
             ? Container(
-                padding: const EdgeInsets.all(6),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [color, color.withOpacity(0.7)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  shape: BoxShape.circle,
+                  color: color.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   trailing,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: color,
                     fontSize: 11,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               )
@@ -772,21 +580,22 @@ class _ProfileScreenState extends State<ProfileScreen>
       builder: (context) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(16),
           ),
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: AppColors.surface,
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.border),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.error.withOpacity(0.1),
+                  decoration: const BoxDecoration(
+                    color: AppColors.errorBg,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -799,7 +608,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 const Text(
                   'Keluar dari Aplikasi',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textPrimary,
                     letterSpacing: -0.5,
@@ -809,7 +618,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 const Text(
                   'Apakah Anda yakin ingin keluar?',
                   style: TextStyle(
-                    color: AppColors.textSecondary,
+                    color: AppColors.textSub,
                     fontSize: 14,
                   ),
                 ),
@@ -821,8 +630,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                         onPressed: () => Navigator.pop(context),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.textSecondary,
-                          side: BorderSide(
-                            color: AppColors.textHint.withOpacity(0.5),
+                          side: const BorderSide(
+                            color: AppColors.border,
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
@@ -866,31 +675,30 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  /// Badge role user (Franchisee / Franchisor)
   Widget _buildRoleBadge(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final isFranchisor = auth.isFranchisor;
-    final label = isFranchisor ? 'Pemilik UMKM (Franchisor)' : 'Calon Franchisee';
+    final label = isFranchisor ? 'Pemilik UMKM' : 'Calon Franchisee';
     final icon = isFranchisor ? Icons.store_rounded : Icons.person_rounded;
     final color = isFranchisor ? const Color(0xFF7C3AED) : AppColors.primary;
+    final bg = isFranchisor ? const Color(0xFFF3E8FF) : AppColors.primaryBg;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.25)),
+        color: bg,
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: color, size: 14),
-          const SizedBox(width: 6),
+          Icon(icon, color: color, size: 12),
+          const SizedBox(width: 4),
           Text(
             label,
             style: TextStyle(
               color: color,
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -899,30 +707,33 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  /// Badge verifikasi franchisor di bawah email user
   Widget _buildVerificationBadge() {
     return Consumer<VerificationProvider>(
       builder: (_, provider, __) {
         if (!provider.hasSubmission) return const SizedBox.shrink();
         final status = provider.currentStatus!;
         Color badgeColor;
+        Color badgeBg;
         IconData badgeIcon;
         String badgeLabel;
         switch (status) {
           case VerificationStatus.verified:
             badgeColor = AppColors.primary;
+            badgeBg = AppColors.primaryBg;
             badgeIcon = Icons.verified_rounded;
-            badgeLabel = 'Franchisor Terverifikasi';
+            badgeLabel = 'Terverifikasi';
             break;
           case VerificationStatus.rejected:
             badgeColor = AppColors.error;
+            badgeBg = AppColors.errorBg;
             badgeIcon = Icons.cancel_rounded;
-            badgeLabel = 'Verifikasi Ditolak';
+            badgeLabel = 'Ditolak';
             break;
           default:
             badgeColor = AppColors.warning;
+            badgeBg = AppColors.warningBg;
             badgeIcon = Icons.hourglass_empty_rounded;
-            badgeLabel = 'Verifikasi Sedang Diproses';
+            badgeLabel = 'Diproses';
         }
         return GestureDetector(
           onTap: () => Navigator.push(
@@ -932,28 +743,27 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
           ),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: badgeColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: badgeColor.withOpacity(0.3)),
+              color: badgeBg,
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(badgeIcon, color: badgeColor, size: 14),
-                const SizedBox(width: 6),
+                Icon(badgeIcon, color: badgeColor, size: 12),
+                const SizedBox(width: 4),
                 Text(
                   badgeLabel,
                   style: TextStyle(
                     color: badgeColor,
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: 2),
                 Icon(Icons.arrow_forward_ios_rounded,
-                    color: badgeColor, size: 10),
+                    color: badgeColor, size: 8),
               ],
             ),
           ),
@@ -962,7 +772,6 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  /// Navigate ke verifikasi atau status (jika sudah ada pengajuan)
   void _navigateToVerification() {
     final provider =
         Provider.of<VerificationProvider>(context, listen: false);

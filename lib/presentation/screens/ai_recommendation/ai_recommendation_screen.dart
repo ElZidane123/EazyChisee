@@ -119,19 +119,10 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
       children: [
         // Header dengan Progress
         Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
             color: AppColors.surface,
-            borderRadius: const BorderRadius.vertical(
-              bottom: Radius.circular(30),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 20,
-                offset: const Offset(0, 5),
-              ),
-            ],
+            border: Border(bottom: BorderSide(color: AppColors.border, width: 1)),
           ),
           child: Column(
             children: [
@@ -140,23 +131,12 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [AppColors.primary, AppColors.accent],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withOpacity(0.3),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+                      color: AppColors.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
                       Icons.auto_awesome_rounded,
-                      color: Colors.white,
+                      color: AppColors.primary,
                       size: 24,
                     ),
                   ),
@@ -261,19 +241,10 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
 
         // Bottom Navigation
         Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          decoration: const BoxDecoration(
             color: AppColors.surface,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(30),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 20,
-                offset: const Offset(0, -5),
-              ),
-            ],
+            border: Border(top: BorderSide(color: AppColors.border, width: 1)),
           ),
           child: Row(
             children: [
@@ -424,33 +395,13 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            gradient: isSelected
-                ? LinearGradient(
-                    colors: [
-                      AppColors.primary.withOpacity(0.1),
-                      AppColors.accent.withOpacity(0.1),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  )
-                : null,
-            color: isSelected ? null : AppColors.surface,
-            borderRadius: BorderRadius.circular(20),
+            color: isSelected ? AppColors.primaryBg : AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected
-                  ? AppColors.primary
-                  : AppColors.textHint.withOpacity(0.2),
+              color: isSelected ? AppColors.primary : AppColors.border,
               width: isSelected ? 2 : 1,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: isSelected
-                    ? AppColors.primary.withOpacity(0.15)
-                    : Colors.black.withOpacity(0.02),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            boxShadow: isSelected ? null : AppColors.shadowSm,
           ),
           child: Row(
             children: [
@@ -460,7 +411,7 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                   color: isSelected
                       ? AppColors.primary
                       : AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   icon,
@@ -475,14 +426,14 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ),
               if (isSelected)
                 Container(
                   padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.primary,
                     shape: BoxShape.circle,
                   ),
@@ -859,76 +810,19 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
         slivers: [
           // App Bar Khusus
           SliverAppBar(
-            expandedHeight: 200,
             pinned: true,
             backgroundColor: AppColors.surface,
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
-              title: const Text(
-                'Rekomendasi AI',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 20,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.primary.withOpacity(0.1),
-                      AppColors.accent.withOpacity(0.1),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      right: -50,
-                      top: -50,
-                      child: Container(
-                        width: 200,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.primary.withOpacity(0.05),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      left: -30,
-                      bottom: -30,
-                      child: Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.accent.withOpacity(0.05),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+            elevation: 0,
+            title: const Text(
+              'Rekomendasi AI',
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w600,
+                fontSize: 17,
               ),
             ),
             leading: IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                    ),
-                  ],
-                ),
-                child: const Icon(Icons.arrow_back_rounded),
-              ),
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
@@ -957,21 +851,11 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [AppColors.primary, AppColors.accent],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withOpacity(0.3),
-                          blurRadius: 25,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: AppColors.shadowPrimary,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -982,7 +866,7 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(
                                 Icons.auto_awesome_rounded,
@@ -1090,10 +974,9 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: AppColors.primary.withOpacity(0.1),
-                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.border, width: 1),
+                        boxShadow: AppColors.shadowSm,
                       ),
                       child: Row(
                         children: [
@@ -1179,31 +1062,22 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [AppColors.warning, AppColors.accent],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.warning.withOpacity(0.3),
-                                      blurRadius: 10,
-                                    ),
-                                  ],
+                                  color: AppColors.goldBg,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(color: AppColors.gold.withOpacity(0.3)),
                                 ),
                                 child: const Row(
                                   children: [
                                     Icon(
                                       Icons.emoji_events_rounded,
-                                      color: Colors.white,
+                                      color: AppColors.gold,
                                       size: 14,
                                     ),
                                     SizedBox(width: 4),
                                     Text(
                                       'Pilihan Terbaik',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: AppColors.gold,
                                         fontSize: 10,
                                         fontWeight: FontWeight.w600,
                                       ),

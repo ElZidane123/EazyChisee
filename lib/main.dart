@@ -80,189 +80,179 @@ class MyApp extends StatelessWidget {
   }
 
   ThemeData _buildTheme() {
-    // Base text theme dengan Google Fonts Poppins
-    final textTheme = GoogleFonts.poppinsTextTheme(
-      const TextTheme(
-        displayLarge: TextStyle(
-          fontSize: 32,
-          fontWeight: FontWeight.w800,
-          color: AppColors.textPrimary,
-          letterSpacing: -0.5,
-        ),
-        displayMedium: TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
-          letterSpacing: -0.5,
-        ),
-        displaySmall: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
-          letterSpacing: -0.5,
-        ),
-        headlineMedium: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
-        ),
-        headlineSmall: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
-        ),
-        titleLarge: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
-        ),
-        bodyLarge: TextStyle(
-          fontSize: 16,
-          color: AppColors.textPrimary,
-        ),
-        bodyMedium: TextStyle(
-          fontSize: 14,
-          color: AppColors.textSecondary,
-        ),
-        bodySmall: TextStyle(
-          fontSize: 12,
-          color: AppColors.textSecondary,
-        ),
+    final textTheme = GoogleFonts.interTextTheme(
+      // Ganti Poppins ke Inter — lebih clean untuk fintech
+      TextTheme(
+        displayLarge:  TextStyle(fontSize: 32, fontWeight: FontWeight.w700, color: AppColors.textPrimary, letterSpacing: -0.8, height: 1.2),
+        displayMedium: TextStyle(fontSize: 26, fontWeight: FontWeight.w700, color: AppColors.textPrimary, letterSpacing: -0.5, height: 1.25),
+        displaySmall:  TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: AppColors.textPrimary, letterSpacing: -0.3, height: 1.3),
+        headlineMedium:TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.textPrimary, letterSpacing: -0.2),
+        headlineSmall: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+        titleLarge:    TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+        titleMedium:   TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.textPrimary),
+        bodyLarge:     TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: AppColors.textPrimary, height: 1.5),
+        bodyMedium:    TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: AppColors.textSub, height: 1.5),
+        bodySmall:     TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.textSub, height: 1.4),
+        labelLarge:    TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+        labelMedium:   TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.textSub),
       ),
     );
 
     return ThemeData(
-      primaryColor: AppColors.primary,
-      scaffoldBackgroundColor: AppColors.background,
-      fontFamily: GoogleFonts.poppins().fontFamily,
-      textTheme: textTheme,
+      useMaterial3: true,
       colorScheme: ColorScheme.light(
         primary: AppColors.primary,
-        secondary: AppColors.accent,
-        error: AppColors.error,
+        onPrimary: AppColors.textOnDark,
+        secondary: AppColors.primary,
         surface: AppColors.surface,
-        onSurface: AppColors.textPrimary,
-        onPrimary: Colors.white,
-        outline: AppColors.divider,
+        background: AppColors.bg,
+        error: AppColors.error,
       ),
+      scaffoldBackgroundColor: AppColors.bg,
+      textTheme: textTheme,
+
+      // App Bar — flat putih bersih, tidak ada gradient
       appBarTheme: AppBarTheme(
-        elevation: 0,
-        centerTitle: false,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.surface,
         foregroundColor: AppColors.textPrimary,
-        titleTextStyle: textTheme.headlineMedium?.copyWith(
-          color: AppColors.textPrimary,
-          fontSize: 20,
+        elevation: 0,
+        scrolledUnderElevation: 1,
+        shadowColor: AppColors.border,
+        titleTextStyle: GoogleFonts.inter(
+          fontSize: 17,
           fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+          letterSpacing: -0.3,
         ),
+        iconTheme: IconThemeData(color: AppColors.textPrimary, size: 22),
+        surfaceTintColor: Colors.transparent,
       ),
+
+      // Card — shadow halus, tidak ada border warna
+      cardTheme: CardThemeData(
+        color: AppColors.surface,
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: AppColors.border, width: 1),
+        ),
+        margin: EdgeInsets.zero,
+      ),
+
+      // ElevatedButton — solid flat, tidak ada gradient di button
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, 48),
+          foregroundColor: AppColors.textOnDark,
+          elevation: 0,
+          shadowColor: Colors.transparent,
+          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: textTheme.bodyLarge?.copyWith(
-            fontSize: 16,
+          textStyle: GoogleFonts.inter(
+            fontSize: 14,
             fontWeight: FontWeight.w600,
+            letterSpacing: 0.1,
           ),
         ),
       ),
+
+      // OutlinedButton
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primary,
-          side: const BorderSide(color: AppColors.primary),
-          minimumSize: const Size(double.infinity, 48),
+          side: BorderSide(color: AppColors.border, width: 1.5),
+          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: textTheme.bodyLarge?.copyWith(
-            fontSize: 16,
+          textStyle: GoogleFonts.inter(
+            fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
         ),
       ),
+
+      // TextButton
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.primary,
-          textStyle: textTheme.bodyMedium?.copyWith(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          textStyle: GoogleFonts.inter(
             fontSize: 14,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
+
+      // Input Field — clean, border tipis
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surface,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
+        fillColor: AppColors.bg,
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: AppColors.border, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: AppColors.textHint.withOpacity(0.2),
-          ),
+          borderSide: BorderSide(color: AppColors.border, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: AppColors.primary,
-            width: 2,
-          ),
+          borderSide: BorderSide(color: AppColors.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: AppColors.error,
-          ),
+          borderSide: BorderSide(color: AppColors.error, width: 1),
         ),
-        labelStyle: textTheme.bodyMedium?.copyWith(
-          color: AppColors.textSecondary,
-        ),
-        hintStyle: textTheme.bodyMedium?.copyWith(
-          color: AppColors.textHint,
+        labelStyle: TextStyle(color: AppColors.textSub, fontSize: 14),
+        hintStyle: TextStyle(color: AppColors.textHint, fontSize: 14),
+        prefixIconColor: AppColors.textSub,
+        suffixIconColor: AppColors.textSub,
+      ),
+
+      // BottomNavBar — flat, tidak ada rounded corner berlebihan
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: AppColors.surface,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.textHint,
+        type: BottomNavigationBarType.fixed,
+        elevation: 0,
+        selectedLabelStyle: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600),
+        unselectedLabelStyle: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w400),
+      ),
+
+      // Chip
+      chipTheme: ChipThemeData(
+        backgroundColor: AppColors.surfaceHover,
+        selectedColor: AppColors.primaryBg,
+        labelStyle: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500),
+        side: BorderSide(color: AppColors.border),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+
+      // Dialog
+      dialogTheme: DialogThemeData(
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        titleTextStyle: GoogleFonts.inter(
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
         ),
       ),
-      cardTheme: CardThemeData(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        color: AppColors.surface,
+
+      // Divider
+      dividerTheme: DividerThemeData(
+        color: AppColors.divider,
+        thickness: 1,
+        space: 1,
       ),
-      // bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      //   backgroundColor: AppColors.surface,
-      //   selectedItemColor: AppColors.primary,
-      //   unselectedItemColor: AppColors.textSecondary,
-      //   type: BottomNavigationBarType.fixed,
-      //   elevation: 8,
-      //   selectedLabelStyle: textTheme.bodySmall?.copyWith(
-      //     fontWeight: FontWeight.w600,
-      //   ),
-      //   unselectedLabelStyle: textTheme.bodySmall,
-      // ),
-      // navigationBarTheme: NavigationBarThemeData(
-      //   backgroundColor: AppColors.surface,
-      //   indicatorColor: AppColors.primary.withOpacity(0.1),
-      //   labelTextStyle: MaterialStateProperty.resolveWith((states) {
-      //     if (states.contains(MaterialState.selected)) {
-      //       return textTheme.bodySmall?.copyWith(
-      //         color: AppColors.primary,
-      //         fontWeight: FontWeight.w600,
-      //       );
-      //     }
-      //     return textTheme.bodySmall?.copyWith(
-      //       color: AppColors.textSecondary,
-      //     );
-      //   }),
-      // ),
     );
   }
 }
@@ -367,4 +357,4 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-}
+}

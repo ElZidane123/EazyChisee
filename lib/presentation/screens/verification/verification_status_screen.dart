@@ -96,63 +96,22 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
   // ────────────────────────────────────────────────────────────
   SliverAppBar _buildAppBar(FranchisorVerificationModel s) {
     return SliverAppBar(
-      expandedHeight: 180,
       pinned: true,
-      backgroundColor: _statusColor(s.status),
-      foregroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       elevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded),
+        icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textPrimary),
         onPressed: () => Navigator.popUntil(
           context,
           (route) => route.isFirst,
         ),
       ),
-      flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                _statusColor(s.status),
-                _statusColorLight(s.status),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 40),
-                ScaleTransition(
-                  scale: _scaleAnim,
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      _statusIcon(s.status),
-                      color: Colors.white,
-                      size: 36,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  s.statusLabel,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
+      title: Text(
+        s.statusLabel,
+        style: const TextStyle(
+          color: AppColors.textPrimary,
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -163,20 +122,12 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
   // ────────────────────────────────────────────────────────────
   Widget _buildStatusCard(FranchisorVerificationModel s) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: _statusColor(s.status).withOpacity(0.12),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-        border: Border.all(
-          color: _statusColor(s.status).withOpacity(0.2),
-        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border, width: 1),
+        boxShadow: AppColors.shadowSm,
       ),
       child: Column(
         children: [
@@ -232,11 +183,10 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
 
   Widget _buildStatusBadge(VerificationStatus status) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: _statusColor(status).withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _statusColor(status).withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -327,17 +277,12 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
     ];
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 15,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border, width: 1),
+        boxShadow: AppColors.shadowSm,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -378,28 +323,28 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
                   children: [
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 400),
-                      width: 36,
-                      height: 36,
+                      width: 32,
+                      height: 32,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isRejected
-                            ? AppColors.error.withOpacity(0.1)
+                            ? AppColors.errorBg
                             : isDone
                                 ? AppColors.primary
-                                : AppColors.surfaceDim,
+                                : AppColors.surface,
                         border: Border.all(
                           color: isRejected
                               ? AppColors.error
                               : isDone
                                   ? AppColors.primary
-                                  : AppColors.divider,
+                                  : AppColors.border,
                           width: 1.5,
                         ),
                       ),
                       child: Center(
                         child: Icon(
                           step['icon'] as IconData,
-                          size: 16,
+                          size: 14,
                           color: isRejected
                               ? AppColors.error
                               : isDone
@@ -410,9 +355,9 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
                     ),
                     if (!isLast)
                       Container(
-                        width: 2,
+                        width: 1.5,
                         height: 36,
-                        color: isDone ? AppColors.primary : AppColors.divider,
+                        color: isDone ? AppColors.primary : AppColors.border,
                       ),
                   ],
                 ),
@@ -462,17 +407,12 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
   // ────────────────────────────────────────────────────────────
   Widget _buildSummaryCard(FranchisorVerificationModel s) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 15,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border, width: 1),
+        boxShadow: AppColors.shadowSm,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -592,8 +532,8 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
                 ),
               ),
               const SizedBox(height: 16),
-              GestureDetector(
-                onTap: () {
+              ElevatedButton.icon(
+                onPressed: () {
                   provider.resetSubmission();
                   Navigator.pushReplacement(
                     context,
@@ -602,30 +542,23 @@ class _VerificationStatusScreenState extends State<VerificationStatusScreen>
                     ),
                   );
                 },
-                child: Container(
+                icon: const Icon(Icons.refresh_rounded, color: Colors.white, size: 18),
+                label: const Text(
+                  'Ajukan Ulang',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(colors: AppColors.gradCoral),
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.refresh_rounded,
-                            color: Colors.white, size: 18),
-                        SizedBox(width: 8),
-                        Text(
-                          'Ajukan Ulang',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  elevation: 0,
+                  minimumSize: const Size(double.infinity, 48),
                 ),
               ),
             ],

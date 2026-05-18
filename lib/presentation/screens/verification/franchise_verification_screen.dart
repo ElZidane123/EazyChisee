@@ -4,6 +4,7 @@
 // ════════════════════════════════════════════════════════════════
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:ui';
 import 'package:provider/provider.dart';
 import 'package:eazychise/core/constants/app_colors.dart';
 import 'package:eazychise/core/models/franchisor_verification_model.dart';
@@ -213,21 +214,15 @@ class _FranchiseVerificationScreenState
   // ────────────────────────────────────────────────────────────
   Widget _buildHeader() {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: AppColors.gradDeep,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
+      color: AppColors.surface,
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 20, 20),
+          padding: const EdgeInsets.fromLTRB(8, 8, 20, 16),
           child: Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary, size: 18),
                 onPressed: () => Navigator.pop(context),
               ),
               const SizedBox(width: 4),
@@ -238,8 +233,8 @@ class _FranchiseVerificationScreenState
                     const Text(
                       'Daftarkan Franchise',
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
+                        color: AppColors.textPrimary,
+                        fontSize: 18,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
                       ),
@@ -248,8 +243,8 @@ class _FranchiseVerificationScreenState
                     Text(
                       'Proses verifikasi 2–5 hari kerja',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.75),
-                        fontSize: 13,
+                        color: AppColors.textSub,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -258,13 +253,13 @@ class _FranchiseVerificationScreenState
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(30),
                 ),
                 child: Text(
                   'Langkah ${_currentStep + 1}/3',
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppColors.primary,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -286,14 +281,12 @@ class _FranchiseVerificationScreenState
       builder: (_, __) {
         return Container(
           height: 4,
-          color: AppColors.divider,
+          color: AppColors.border,
           alignment: Alignment.centerLeft,
           child: FractionallySizedBox(
             widthFactor: _progressAnimation.value,
             child: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(colors: AppColors.grad),
-              ),
+              color: AppColors.primary,
             ),
           ),
         );
@@ -313,6 +306,7 @@ class _FranchiseVerificationScreenState
         children: List.generate(steps.length, (i) {
           final isDone = i < _currentStep;
           final isActive = i == _currentStep;
+          final isFinished = isDone || isActive;
           return Expanded(
             child: Row(
               children: [
@@ -322,14 +316,10 @@ class _FranchiseVerificationScreenState
                   height: 28,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isDone
-                        ? AppColors.primary
-                        : isActive
-                            ? AppColors.primary
-                            : AppColors.surfaceDim,
+                    color: isFinished ? AppColors.primary : Colors.transparent,
                     border: Border.all(
-                      color: isActive ? AppColors.primary : Colors.transparent,
-                      width: 2,
+                      color: isFinished ? AppColors.primary : AppColors.border,
+                      width: 1.5,
                     ),
                   ),
                   child: Center(
@@ -338,14 +328,14 @@ class _FranchiseVerificationScreenState
                         : Text(
                             '${i + 1}',
                             style: TextStyle(
-                              color: isActive ? Colors.white : AppColors.textHint,
+                              color: isFinished ? Colors.white : AppColors.textHint,
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -354,7 +344,7 @@ class _FranchiseVerificationScreenState
                         steps[i],
                         style: TextStyle(
                           fontSize: 12,
-                          fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
+                          fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
                           color: isActive
                               ? AppColors.primary
                               : isDone
@@ -368,11 +358,11 @@ class _FranchiseVerificationScreenState
                 if (i < steps.length - 1)
                   Expanded(
                     child: Container(
-                      height: 1,
-                      margin: const EdgeInsets.only(left: 4, right: 4),
+                      height: 1.5,
+                      margin: const EdgeInsets.only(left: 6, right: 6),
                       color: i < _currentStep
                           ? AppColors.primary
-                          : AppColors.divider,
+                          : AppColors.border,
                     ),
                   ),
               ],
@@ -602,76 +592,78 @@ class _FranchiseVerificationScreenState
           }
         });
       },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isUploaded
-              ? AppColors.primaryBg
-              : AppColors.bg,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isUploaded ? AppColors.primary : AppColors.divider,
-            width: isUploaded ? 1.5 : 1,
+      child: CustomPaint(
+        painter: isUploaded ? null : DashedBorderPainter(color: AppColors.border, radius: 12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isUploaded
+                ? AppColors.primaryBg
+                : AppColors.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: isUploaded 
+                ? Border.all(color: AppColors.primary, width: 1.5)
+                : Border.all(color: Colors.transparent),
           ),
-        ),
-        child: Row(
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: isUploaded
-                    ? AppColors.primary
-                    : AppColors.surfaceDim,
-                borderRadius: BorderRadius.circular(12),
+          child: Row(
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: isUploaded
+                      ? AppColors.primary
+                      : AppColors.bg,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  isUploaded
+                      ? Icons.check_rounded
+                      : Icons.upload_file_rounded,
+                  color: isUploaded ? Colors.white : AppColors.textHint,
+                  size: 22,
+                ),
               ),
-              child: Icon(
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      FranchisorVerificationModel.documentLabel(docType),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: isUploaded
+                            ? AppColors.primary
+                            : AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      isUploaded ? 'Berhasil diunggah' : 'Ketuk untuk unggah',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isUploaded
+                            ? AppColors.primaryDark
+                            : AppColors.textHint,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
                 isUploaded
-                    ? Icons.check_rounded
-                    : Icons.upload_file_rounded,
-                color: isUploaded ? Colors.white : AppColors.textHint,
-                size: 22,
+                    ? Icons.check_circle_rounded
+                    : Icons.arrow_forward_ios_rounded,
+                color: isUploaded ? AppColors.primary : AppColors.textHint,
+                size: isUploaded ? 20 : 14,
               ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    FranchisorVerificationModel.documentLabel(docType),
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: isUploaded
-                          ? AppColors.primary
-                          : AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    isUploaded ? 'Berhasil diunggah' : 'Ketuk untuk unggah',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isUploaded
-                          ? AppColors.primaryDark
-                          : AppColors.textHint,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              isUploaded
-                  ? Icons.check_circle_rounded
-                  : Icons.arrow_forward_ios_rounded,
-              color: isUploaded ? AppColors.primary : AppColors.textHint,
-              size: isUploaded ? 20 : 16,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -845,17 +837,12 @@ class _FranchiseVerificationScreenState
     required List<Widget> children,
   }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 15,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border, width: 1),
+        boxShadow: AppColors.shadowSm,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -922,7 +909,7 @@ class _FranchiseVerificationScreenState
         fillColor: AppColors.bg,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.divider),
+          borderSide: const BorderSide(color: AppColors.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -957,7 +944,7 @@ class _FranchiseVerificationScreenState
         fillColor: AppColors.bg,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.divider),
+          borderSide: const BorderSide(color: AppColors.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -980,16 +967,10 @@ class _FranchiseVerificationScreenState
     return Consumer<VerificationProvider>(
       builder: (_, provider, __) {
         return Container(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          decoration: const BoxDecoration(
             color: AppColors.surface,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 15,
-                offset: const Offset(0, -5),
-              ),
-            ],
+            border: Border(top: BorderSide(color: AppColors.border, width: 1)),
           ),
           child: SafeArea(
             top: false,
@@ -1004,7 +985,7 @@ class _FranchiseVerificationScreenState
                       padding: const EdgeInsets.symmetric(
                           horizontal: 24, vertical: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       minimumSize: Size.zero,
                     ),
@@ -1020,62 +1001,50 @@ class _FranchiseVerificationScreenState
                   const SizedBox(width: 12),
                 ],
                 Expanded(
-                  child: GestureDetector(
-                    onTap: provider.isSubmitting
+                  child: ElevatedButton(
+                    onPressed: provider.isSubmitting
                         ? null
                         : (isLastStep ? _submitVerification : _nextStep),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      height: 52,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: AppColors.grad,
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withOpacity(0.3),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Center(
-                        child: provider.isSubmitting
-                            ? const SizedBox(
-                                width: 22,
-                                height: 22,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2.5,
-                                ),
-                              )
-                            : Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    isLastStep ? 'Ajukan Verifikasi' : 'Lanjut',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.3,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Icon(
-                                    isLastStep
-                                        ? Icons.send_rounded
-                                        : Icons.arrow_forward_rounded,
-                                    color: Colors.white,
-                                    size: 18,
-                                  ),
-                                ],
-                              ),
-                      ),
+                      elevation: 0,
                     ),
+                    child: provider.isSubmitting
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2.5,
+                            ),
+                          )
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                isLastStep ? 'Ajukan Verifikasi' : 'Lanjut',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Icon(
+                                isLastStep
+                                    ? Icons.send_rounded
+                                    : Icons.arrow_forward_rounded,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            ],
+                          ),
                   ),
                 ),
               ],
@@ -1103,13 +1072,13 @@ class _FranchiseVerificationScreenState
           children: [
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: AppColors.grad),
+              decoration: const BoxDecoration(
+                color: AppColors.primaryBg,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.verified_outlined,
-                color: Colors.white,
+                color: AppColors.primary,
                 size: 32,
               ),
             ),
@@ -1177,4 +1146,58 @@ class _FranchiseVerificationScreenState
       ),
     );
   }
+}
+
+class DashedBorderPainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final double gap;
+  final double radius;
+
+  DashedBorderPainter({
+    this.color = AppColors.border,
+    this.strokeWidth = 1,
+    this.gap = 5,
+    this.radius = 12,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final path = Path()
+      ..addRRect(RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+        Radius.circular(radius),
+      ));
+
+    final dashPath = _buildDashPath(path, gap);
+    canvas.drawPath(dashPath, paint);
+  }
+
+  Path _buildDashPath(Path source, double gap) {
+    final Path dest = Path();
+    for (final PathMetric metric in source.computeMetrics()) {
+      double distance = 0.0;
+      bool draw = true;
+      while (distance < metric.length) {
+        final double len = draw ? gap * 1.5 : gap;
+        if (draw) {
+          dest.addPath(
+            metric.extractPath(distance, distance + len),
+            Offset.zero,
+          );
+        }
+        distance += len;
+        draw = !draw;
+      }
+    }
+    return dest;
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

@@ -73,159 +73,16 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.bg,
+      appBar: AppBar(
+        title: const Text('Pasar Franchise'),
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        scrolledUnderElevation: 1,
+      ),
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
-          // App Bar Elegan
-          SliverAppBar(
-            expandedHeight: 145,
-            floating: true,
-            pinned: true,
-            backgroundColor: _isScrolled
-                ? AppColors.surface.withOpacity(0.8)
-                : Colors.transparent,
-            elevation: _isScrolled ? 4 : 0,
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: EdgeInsets.zero,
-              title: AnimatedContainer(
-                duration: const Duration(milliseconds: 500),
-                padding: EdgeInsets.only(
-                  top: 5,
-                  left: 20,
-                  bottom: _isScrolled ? 6 : 20,
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColors.primary, AppColors.accent],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withOpacity(0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                        
-                      ),
-                      child: const Icon(
-                        Icons.storefront_rounded,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Pasar Franchise',
-                          style: TextStyle(
-                            color: AppColors.textPrimary,
-                            fontWeight: FontWeight.w700,
-                            fontSize: _isScrolled ? 16 : 17,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                        if (!_isScrolled)
-                          Text(
-                            'Temukan peluang Franchise terbaik',
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 9,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.primary.withOpacity(0.05),
-                      AppColors.accent.withOpacity(0.05),
-                      Colors.transparent,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-              ),
-            ),
-            actions: [
-              // Notifikasi
-              Container(
-                margin: const EdgeInsets.only(right: 8),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Stack(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.notifications_none_rounded),
-                      onPressed: () {},
-                      color: AppColors.textPrimary,
-                    ),
-                    Positioned(
-                      top: 12,
-                      right: 12,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: AppColors.error,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.surface,
-                            width: 1.5,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Filter
-              Container(
-                margin: const EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.tune_rounded),
-                  onPressed: _showFilterDialog,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-            ],
-          ),
 
           // Konten Utama
           SliverPadding(
@@ -312,65 +169,61 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
           child: Opacity(opacity: value, child: child),
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 5),
+      child: TextField(
+        controller: _searchController,
+        focusNode: _focusNode,
+        onChanged: (value) {
+          Provider.of<FranchiseProvider>(
+            context,
+            listen: false,
+          ).setSearchQuery(value);
+        },
+        style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
+        decoration: InputDecoration(
+          hintText: 'Cari Franchise...',
+          hintStyle: TextStyle(color: AppColors.textHint, fontSize: 14),
+          prefixIcon: Container(
+            margin: const EdgeInsets.all(12),
+            child: Icon(
+              Icons.search_rounded,
+              color: _focusNode.hasFocus
+                  ? AppColors.primary
+                  : AppColors.textHint,
+              size: 20,
             ),
-          ],
-        ),
-        child: TextField(
-          controller: _searchController,
-          focusNode: _focusNode,
-          onChanged: (value) {
-            Provider.of<FranchiseProvider>(
-              context,
-              listen: false,
-            ).setSearchQuery(value);
-          },
-          style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
-          decoration: InputDecoration(
-            hintText: 'Cari Franchise...',
-            hintStyle: TextStyle(color: AppColors.textHint, fontSize: 15),
-            prefixIcon: Container(
-              margin: const EdgeInsets.all(12),
-              child: Icon(
-                Icons.search_rounded,
-                color: _focusNode.hasFocus
-                    ? AppColors.primary
-                    : AppColors.textHint,
-                size: 22,
-              ),
-            ),
-            suffixIcon: _searchController.text.isNotEmpty
-                ? IconButton(
-                    icon: Icon(
-                      Icons.close_rounded,
-                      color: AppColors.textSecondary,
-                    ),
-                    onPressed: () {
-                      _searchController.clear();
-                      Provider.of<FranchiseProvider>(
-                        context,
-                        listen: false,
-                      ).setSearchQuery('');
-                    },
-                  )
-                : null,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: BorderSide.none,
-            ),
-            filled: true,
-            fillColor: AppColors.surface,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 16,
-            ),
+          ),
+          suffixIcon: _searchController.text.isNotEmpty
+              ? IconButton(
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: AppColors.textSub,
+                  ),
+                  onPressed: () {
+                    _searchController.clear();
+                    Provider.of<FranchiseProvider>(
+                      context,
+                      listen: false,
+                    ).setSearchQuery('');
+                  },
+                )
+              : null,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: AppColors.border, width: 1),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: AppColors.border, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+          ),
+          filled: true,
+          fillColor: AppColors.bg,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
           ),
         ),
       ),
@@ -438,29 +291,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                     width: 85,
                     margin: const EdgeInsets.only(right: 12),
                     decoration: BoxDecoration(
-                      gradient: isSelected
-                          ? LinearGradient(
-                              colors: [AppColors.primary, AppColors.accent],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            )
-                          : null,
-                      color: isSelected ? null : AppColors.surface,
-                      borderRadius: BorderRadius.circular(18),
+                      color: isSelected ? AppColors.primaryBg : AppColors.bg,
+                      borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: isSelected
-                            ? Colors.transparent
-                            : AppColors.primary.withOpacity(0.1),
+                        color: isSelected ? AppColors.primary : AppColors.border,
+                        width: isSelected ? 1.5 : 1,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: isSelected
-                              ? AppColors.primary.withOpacity(0.3)
-                              : Colors.black.withOpacity(0.02),
-                          blurRadius: isSelected ? 12 : 5,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+                      boxShadow: isSelected ? AppColors.shadowSm : [],
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -469,16 +306,16 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? Colors.white.withOpacity(0.2)
-                                : AppColors.primary.withOpacity(0.1),
+                                ? AppColors.primary.withOpacity(0.1)
+                                : AppColors.border.withOpacity(0.3),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             category['icon'] as IconData,
                             color: isSelected
-                                ? Colors.white
-                                : AppColors.primary,
-                            size: 22,
+                                ? AppColors.primary
+                                : AppColors.textSub,
+                            size: 20,
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -486,8 +323,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                           category['name'] as String,
                           style: TextStyle(
                             color: isSelected
-                                ? Colors.white
-                                : AppColors.textPrimary,
+                                ? AppColors.primary
+                                : AppColors.textSub,
                             fontSize: 11,
                             fontWeight: isSelected
                                 ? FontWeight.w600
@@ -511,18 +348,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
 
   Widget _buildStatsCard() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(25),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-            
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border, width: 1),
+        boxShadow: AppColors.shadowSm,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -536,7 +367,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
           Container(
             height: 40,
             width: 1,
-            color: AppColors.textHint.withOpacity(0.2),
+            color: AppColors.divider,
           ),
           _buildStatItem(
             'Rata-rata ROI',
@@ -547,7 +378,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
           Container(
             height: 40,
             width: 1,
-            color: AppColors.textHint.withOpacity(0.2),
+            color: AppColors.divider,
           ),
           _buildStatItem(
             'Modal Minimal',
@@ -600,47 +431,22 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
         const Text(
           'Daftar Franchise',
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
-            letterSpacing: -0.5,
           ),
         ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: AppColors.primary.withOpacity(0.1)),
+        OutlinedButton.icon(
+          onPressed: _showFilterDialog,
+          icon: Icon(Icons.filter_list_rounded, color: AppColors.textSub),
+          label: Text(
+            'Filter',
+            style: TextStyle(color: AppColors.textPrimary, fontSize: 13),
           ),
-          child: Row(
-            children: [
-              Icon(Icons.sort_rounded, size: 18, color: AppColors.primary),
-              const SizedBox(width: 6),
-              DropdownButton<String>(
-                value: _selectedSort,
-                items: _sortOptions.map((option) {
-                  return DropdownMenuItem(
-                    value: option,
-                    child: Text(option, style: const TextStyle(fontSize: 13)),
-                  );
-                }).toList(),
-                onChanged: (value) => setState(() => _selectedSort = value!),
-                underline: const SizedBox(),
-                icon: Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  color: AppColors.primary,
-                  size: 20,
-                ),
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-                dropdownColor: AppColors.surface,
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ],
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(color: AppColors.border, width: 1),
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
         ),
       ],
@@ -716,7 +522,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(30),
+                  top: Radius.circular(24),
                 ),
               ),
               child: Column(
@@ -724,36 +530,23 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                   // Handle
                   Container(
                     margin: const EdgeInsets.only(top: 12),
-                    width: 40,
+                    width: 36,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: AppColors.textHint.withOpacity(0.3),
+                      color: AppColors.border,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
 
                   // Header
                   Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(
-                            Icons.tune_rounded,
-                            color: AppColors.primary,
-                            size: 22,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
                         const Text(
                           'Filter',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textPrimary,
                           ),
@@ -770,15 +563,16 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                   Expanded(
                     child: ListView(
                       controller: scrollController,
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(16),
                       children: [
                         // Range Modal
                         const Text(
                           'Rentang Modal (Juta)',
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                            color: AppColors.textSub,
+                            letterSpacing: 0.5,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -794,7 +588,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                           onChanged: (values) =>
                               setState(() => _investmentRange = values),
                           activeColor: AppColors.primary,
-                          inactiveColor: AppColors.textHint.withOpacity(0.2),
+                          inactiveColor: AppColors.divider,
                         ),
                         Row(
                           children: [
@@ -817,9 +611,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                         const Text(
                           'ROI Minimum',
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                            color: AppColors.textSub,
+                            letterSpacing: 0.5,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -831,7 +626,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                           label: '${_minROI.round()}%',
                           onChanged: (value) => setState(() => _minROI = value),
                           activeColor: AppColors.primary,
-                          inactiveColor: AppColors.textHint.withOpacity(0.2),
+                          inactiveColor: AppColors.divider,
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 10),
@@ -839,7 +634,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                           child: Text(
                             '${_minROI.round()}% atau lebih',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: AppColors.primary,
                             ),
@@ -851,9 +646,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                         const Text(
                           'Filter Tambahan',
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                            color: AppColors.textSub,
+                            letterSpacing: 0.5,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -867,16 +663,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
 
                   // Tombol Aksi
                   Container(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: AppColors.surface,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, -5),
-                        ),
-                      ],
+                      border: Border(top: BorderSide(color: AppColors.border)),
                     ),
                     child: Row(
                       children: [
@@ -889,13 +679,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                               });
                             },
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: AppColors.textSecondary,
+                              foregroundColor: AppColors.textSub,
                               side: BorderSide(
-                                color: AppColors.textHint.withOpacity(0.5),
+                                color: AppColors.border,
                               ),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                             child: const Text('Reset'),
@@ -908,9 +698,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                             child: const Text('Terapkan'),
@@ -930,17 +720,18 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
 
   Widget _buildFilterChip(String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(10),
+        color: AppColors.primaryBg,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.primary, width: 1),
       ),
       child: Text(
         label,
         style: const TextStyle(
           color: AppColors.primary,
-          fontWeight: FontWeight.w500,
-          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          fontSize: 11,
         ),
         textAlign: TextAlign.center,
       ),
@@ -949,24 +740,29 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
 
   Widget _buildFilterSwitch(String label, bool value) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.circular(12),
+        color: AppColors.bg,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.border, width: 1),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           Switch(
             value: value,
             onChanged: (val) {},
             activeColor: AppColors.primary,
-            activeTrackColor: AppColors.primary.withOpacity(0.3),
+            activeTrackColor: AppColors.primaryBg,
           ),
         ],
       ),
@@ -1047,19 +843,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                         Container(
                           height: 200,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [AppColors.primary, AppColors.accent],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withOpacity(0.3),
-                                blurRadius: 15,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
+                            color: AppColors.surfaceDim,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: AppColors.border),
                             image: DecorationImage(
                               image: NetworkImage(franchise.images),
                               fit: BoxFit.cover,
@@ -1067,37 +853,33 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                           ),
                           child: Stack(
                             children: [
-                              Center(
-                                // child: Icon(
-                                //   Icons.store,
-                                //   size: 80,
-                                //   color: Colors.white.withOpacity(0.8),
-                                // ),
-                              ),
                               Positioned(
                                 top: 12,
                                 right: 12,
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
+                                    horizontal: 8,
+                                    vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
+                                    color: Colors.white.withOpacity(0.9),
+                                    borderRadius: BorderRadius.circular(6),
+                                    boxShadow: AppColors.shadowSm,
                                   ),
                                   child: Row(
                                     children: [
-                                      Icon(
+                                      const Icon(
                                         Icons.star_rounded,
                                         color: AppColors.warning,
-                                        size: 16,
+                                        size: 14,
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
                                         franchise.rating.toString(),
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w600,
+                                          fontSize: 11,
+                                          color: AppColors.textPrimary,
                                         ),
                                       ),
                                     ],
@@ -1113,27 +895,31 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                         Text(
                           franchise.name,
                           style: const TextStyle(
-                            fontSize: 22,
+                            fontSize: 20,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textPrimary,
+                            letterSpacing: -0.5,
                           ),
                         ),
-                        const SizedBox(height: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            franchise.category,
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
+                        const SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryBg,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              franchise.category,
+                              style: const TextStyle(
+                                color: AppColors.primary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
@@ -1188,9 +974,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                         const SizedBox(height: 8),
                         Text(
                           franchise.description,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.textSecondary,
                             height: 1.5,
+                            fontSize: 14,
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -1208,8 +995,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: AppColors.background,
-                            borderRadius: BorderRadius.circular(16),
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppColors.border),
                           ),
                           child: Column(
                             children: [
@@ -1217,9 +1005,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                                 'Tahun Berdiri',
                                 franchise.foundedYear,
                               ),
-                              const Divider(height: 16),
+                              const Divider(height: 16, color: AppColors.border),
                               _buildInfoRow('Total Mitra', '150+'),
-                              const Divider(height: 16),
+                              const Divider(height: 16, color: AppColors.border),
                               _buildInfoRow('Syarat', 'Min. 1 tahun'),
                             ],
                           ),
@@ -1231,15 +1019,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                   // Tombol Aksi
                   Container(
                     padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.surface,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, -5),
-                        ),
-                      ],
+                      border: Border(top: BorderSide(color: AppColors.border)),
                     ),
                     child: Row(
                       children: [
@@ -1275,6 +1057,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                                       provider.isBookmarked(franchise)
                                           ? 'Tersimpan'
                                           : 'Simpan',
+                                      style: const TextStyle(fontWeight: FontWeight.w600),
                                     ),
                                   ],
                                 );
@@ -1294,15 +1077,18 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                                  borderRadius: BorderRadius.circular(12)),
+                              elevation: 0,
                             ),
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(Icons.payments_rounded, size: 18),
-                                SizedBox(width: 6),
-                                Text('Ajukan'),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'Ajukan',
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
                               ],
                             ),
                           ),
@@ -1328,26 +1114,29 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(14),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+        boxShadow: AppColors.shadowSm,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: color, size: 22),
-          const SizedBox(height: 4),
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 6),
           Text(
             value,
             style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
               color: AppColors.textPrimary,
             ),
             textAlign: TextAlign.center,
           ),
+          const SizedBox(height: 2),
           Text(
             label,
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 10),
+            style: const TextStyle(color: AppColors.textSub, fontSize: 10),
           ),
         ],
       ),
@@ -1358,11 +1147,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: TextStyle(color: AppColors.textSecondary)),
+        Text(label, style: const TextStyle(color: AppColors.textSub, fontSize: 13)),
         Text(
           value,
           style: const TextStyle(
             fontWeight: FontWeight.w600,
+            fontSize: 13,
             color: AppColors.textPrimary,
           ),
         ),
@@ -1381,24 +1171,24 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
       backgroundColor: Colors.transparent,
       builder: (context) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.7,
+          initialChildSize: 0.75,
           minChildSize: 0.5,
           maxChildSize: 0.9,
           builder: (context, scrollController) {
             return Container(
               decoration: const BoxDecoration(
                 color: AppColors.surface,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
               child: Column(
                 children: [
                   // Handle
                   Container(
                     margin: const EdgeInsets.only(top: 12),
-                    width: 40,
+                    width: 36,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: AppColors.textHint.withOpacity(0.3),
+                      color: AppColors.border,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -1411,7 +1201,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
+                            color: AppColors.primary.withOpacity(0.08),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(
@@ -1427,7 +1217,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textPrimary,
+                            letterSpacing: -0.5,
                           ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.close_rounded),
+                          onPressed: () => Navigator.pop(context),
                         ),
                       ],
                     ),
@@ -1438,43 +1234,36 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                       key: formKey,
                       child: ListView(
                         controller: scrollController,
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         children: [
                           // Info Franchise
                           Container(
-                            padding: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: AppColors.background,
-                              borderRadius: BorderRadius.circular(16),
+                              color: AppColors.surface,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: AppColors.border),
+                              boxShadow: AppColors.shadowSm,
                             ),
                             child: Row(
                               children: [
                                 Container(
-                                  width: 50,
-                                  height: 50,
+                                  width: 48,
+                                  height: 48,
                                   decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        AppColors.primary,
-                                        AppColors.accent,
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
+                                    color: AppColors.surfaceDim,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: AppColors.border),
                                     image: DecorationImage(
                                       image: NetworkImage(franchise.images),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-                                  // child: const Icon(
-                                  //   Icons.store_rounded,
-                                  //   color: Colors.white,
-                                  // ),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         franchise.name,
@@ -1484,10 +1273,11 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                                           color: AppColors.textPrimary,
                                         ),
                                       ),
+                                      const SizedBox(height: 2),
                                       Text(
                                         franchise.category,
-                                        style: TextStyle(
-                                          color: AppColors.textSecondary,
+                                        style: const TextStyle(
+                                          color: AppColors.textSub,
                                           fontSize: 12,
                                         ),
                                       ),
@@ -1500,61 +1290,95 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                           const SizedBox(height: 20),
 
                           // Jumlah
-                          TextFormField(
-                            controller: amountController,
-                            keyboardType: TextInputType.number,
-                            style: const TextStyle(
-                              color: AppColors.textPrimary,
-                            ),
-                            decoration: InputDecoration(
-                              labelText: 'Jumlah Pendanaan',
-                              prefixText: 'Rp ',
-                              labelStyle: TextStyle(
-                                color: AppColors.textSecondary,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Jumlah Pendanaan',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textSub,
+                                ),
                               ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide.none,
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                controller: amountController,
+                                keyboardType: TextInputType.number,
+                                style: const TextStyle(
+                                  color: AppColors.textPrimary,
+                                  fontSize: 15,
+                                ),
+                                decoration: InputDecoration(
+                                  prefixText: 'Rp ',
+                                  hintText: 'Contoh: 100000000',
+                                  hintStyle: const TextStyle(color: AppColors.textHint, fontSize: 14),
+                                  filled: true,
+                                  fillColor: AppColors.bg,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(color: AppColors.border),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Masukkan jumlah pendanaan';
+                                  }
+                                  return null;
+                                },
                               ),
-                              filled: true,
-                              fillColor: AppColors.background,
-                              contentPadding: const EdgeInsets.all(16),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Masukkan jumlah pendanaan';
-                              }
-                              return null;
-                            },
+                            ],
                           ),
                           const SizedBox(height: 16),
 
                           // Tenor
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            decoration: BoxDecoration(
-                              color: AppColors.background,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: DropdownButtonFormField<int>(
-                              decoration: const InputDecoration(
-                                labelText: 'Jangka Waktu',
-                                border: InputBorder.none,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Jangka Waktu',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textSub,
+                                ),
                               ),
-                              items: [12, 24, 36, 48].map((months) {
-                                return DropdownMenuItem(
-                                  value: months,
-                                  child: Text('$months bulan'),
-                                );
-                              }).toList(),
-                              onChanged: (value) => selectedTenure = value,
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'Pilih jangka waktu';
-                                }
-                                return null;
-                              },
-                            ),
+                              const SizedBox(height: 8),
+                              DropdownButtonFormField<int>(
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: AppColors.bg,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(color: AppColors.border),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                ),
+                                hint: const Text('Pilih jangka waktu', style: TextStyle(color: AppColors.textHint, fontSize: 14)),
+                                items: [12, 24, 36, 48].map((months) {
+                                  return DropdownMenuItem(
+                                    value: months,
+                                    child: Text('$months bulan', style: const TextStyle(color: AppColors.textPrimary, fontSize: 14)),
+                                  );
+                                }).toList(),
+                                onChanged: (value) => selectedTenure = value,
+                                validator: (value) {
+                                  if (value == null) {
+                                    return 'Pilih jangka waktu';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 20),
 
@@ -1562,13 +1386,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  AppColors.primary.withOpacity(0.05),
-                                  AppColors.accent.withOpacity(0.05),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(16),
+                              color: AppColors.primaryBg,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: AppColors.primary.withOpacity(0.2)),
                             ),
                             child: Column(
                               children: [
@@ -1589,15 +1409,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                   // Tombol Aksi
                   Container(
                     padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.surface,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, -5),
-                        ),
-                      ],
+                      border: Border(top: BorderSide(color: AppColors.border)),
                     ),
                     child: Row(
                       children: [
@@ -1606,8 +1420,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                             onPressed: () => Navigator.pop(context),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: AppColors.textSecondary,
-                              side: BorderSide(
-                                color: AppColors.textHint.withOpacity(0.5),
+                              side: const BorderSide(
+                                color: AppColors.border,
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
@@ -1645,8 +1459,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
+                              elevation: 0,
                             ),
-                            child: const Text('Kirim'),
+                            child: const Text('Kirim', style: TextStyle(fontWeight: FontWeight.w600)),
                           ),
                         ),
                       ],
@@ -1665,11 +1480,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: TextStyle(color: AppColors.textSecondary)),
+        Text(label, style: const TextStyle(color: AppColors.textSub, fontSize: 13)),
         Text(
           value,
           style: const TextStyle(
             fontWeight: FontWeight.w600,
+            fontSize: 13,
             color: AppColors.textPrimary,
           ),
         ),

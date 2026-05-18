@@ -73,109 +73,28 @@ class _FundingScreenState extends State<FundingScreen>
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
-          // Modern App Bar
           SliverAppBar(
-            expandedHeight: 160,
-            floating: true,
             pinned: true,
-            backgroundColor: _isScrolled 
-                ? AppColors.surface.withOpacity(0.8)
-                : Colors.transparent,
-            elevation: _isScrolled ? 4 : 0,
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: EdgeInsets.zero,
-              title: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                padding: EdgeInsets.only(
-                  left: 20,
-                  bottom: _isScrolled ? 12 : 16,
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColors.primary, AppColors.accent],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withOpacity(0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.account_balance_wallet_rounded,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Pendanaan',
-                          style: TextStyle(
-                            color: AppColors.textPrimary,
-                            fontWeight: FontWeight.w700,
-                            fontSize: _isScrolled ? 20 : 24,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                        if (!_isScrolled)
-                          Text(
-                            'Kelola pendanaan Franchisemu',
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 10,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.primary.withOpacity(0.05),
-                      AppColors.accent.withOpacity(0.05),
-                      Colors.transparent,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
+            floating: true,
+            backgroundColor: AppColors.surface,
+            elevation: 0,
+            title: const Text(
+              'Pendanaan',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 17,
+                color: AppColors.textPrimary,
               ),
             ),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+              onPressed: () => Navigator.maybePop(context),
+            ),
             actions: [
-              // Add Button
-              Container(
-                margin: const EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.add_rounded),
-                  onPressed: () => _showNewFundingDialog(context),
-                  color: AppColors.primary,
-                ),
+              IconButton(
+                icon: const Icon(Icons.add_rounded),
+                onPressed: () => _showNewFundingDialog(context),
+                color: AppColors.primary,
               ),
             ],
           ),
@@ -315,18 +234,12 @@ class _FundingScreenState extends State<FundingScreen>
     required List<Color> gradientColors,
   }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: gradientColors.map((c) => c.withOpacity(0.1)).toList(),
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: color.withOpacity(0.2),
-          width: 1,
-        ),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border, width: 1),
+        boxShadow: AppColors.shadowSm,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -337,46 +250,47 @@ class _FundingScreenState extends State<FundingScreen>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: color, size: 20),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(
-                  amount > 0 ? '+${((amount / 1000000)).toStringAsFixed(1)}Jt' : '0',
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
+                child: Icon(icon, color: color, size: 18),
+              ),
+              if (amount > 0)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    '+${((amount / 1000000)).toStringAsFixed(1)}Jt',
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            'Rp ${amount.toStringAsFixed(0)}',
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 12),
           Text(
             title,
-            style: TextStyle(
-              color: AppColors.textSecondary,
+            style: const TextStyle(
+              color: AppColors.textSub,
               fontSize: 12,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Rp ${amount.toStringAsFixed(0)}',
+            style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
@@ -386,38 +300,23 @@ class _FundingScreenState extends State<FundingScreen>
 
   Widget _buildTabBar() {
     return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: AppColors.border, width: 1)),
       ),
       child: Row(
         children: List.generate(_tabs.length, (index) {
+          final isSelected = _selectedTab == index;
           return Expanded(
             child: GestureDetector(
               onTap: () {
                 _tabController.animateTo(index);
               },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
+              child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  gradient: _selectedTab == index
-                      ? LinearGradient(
-                          colors: [AppColors.primary, AppColors.accent],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        )
+                  border: isSelected
+                      ? const Border(bottom: BorderSide(color: AppColors.primary, width: 2))
                       : null,
-                  borderRadius: BorderRadius.circular(12),
-                  color: _selectedTab == index ? null : Colors.transparent,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -425,20 +324,14 @@ class _FundingScreenState extends State<FundingScreen>
                     Icon(
                       _tabs[index]['icon'],
                       size: 16,
-                      color: _selectedTab == index
-                          ? Colors.white
-                          : AppColors.textSecondary,
+                      color: isSelected ? AppColors.primary : AppColors.textSub,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       _tabs[index]['label'],
                       style: TextStyle(
-                        color: _selectedTab == index
-                            ? Colors.white
-                            : AppColors.textSecondary,
-                        fontWeight: _selectedTab == index
-                            ? FontWeight.w600
-                            : FontWeight.normal,
+                        color: isSelected ? AppColors.primary : AppColors.textSub,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                         fontSize: 13,
                       ),
                     ),
@@ -469,12 +362,7 @@ class _FundingScreenState extends State<FundingScreen>
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.primary.withOpacity(0.1),
-                          AppColors.accent.withOpacity(0.1),
-                        ],
-                      ),
+                      color: AppColors.primary.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -580,11 +468,7 @@ class _FundingScreenState extends State<FundingScreen>
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [AppColors.primary, AppColors.accent],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
+                            color: AppColors.primary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(14),
                           ),
                           child: const Icon(
@@ -784,17 +668,13 @@ class _FundingScreenState extends State<FundingScreen>
                           ),
                           const SizedBox(height: 20),
 
-                          // Summary Card
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  AppColors.primary.withOpacity(0.05),
-                                  AppColors.accent.withOpacity(0.05),
-                                ],
-                              ),
+                              color: AppColors.surface,
                               borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: AppColors.border, width: 1),
+                              boxShadow: AppColors.shadowSm,
                             ),
                             child: Column(
                               children: [
@@ -1033,16 +913,13 @@ class _FundingScreenState extends State<FundingScreen>
                         // Progress Card untuk Active Fundings
                         if (funding.status == 'approved' || funding.status == 'disbursed')
                           Container(
-                            padding: const EdgeInsets.all(20),
+                            padding: const EdgeInsets.all(16),
                             margin: const EdgeInsets.only(bottom: 20),
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  AppColors.primary.withOpacity(0.1),
-                                  AppColors.accent.withOpacity(0.1),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(20),
+                              color: AppColors.surface,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: AppColors.border, width: 1),
+                              boxShadow: AppColors.shadowSm,
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1253,11 +1130,10 @@ class _FundingScreenState extends State<FundingScreen>
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withOpacity(0.2),
-        ),
+        border: Border.all(color: AppColors.border, width: 1),
+        boxShadow: AppColors.shadowSm,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

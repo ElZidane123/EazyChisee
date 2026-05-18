@@ -40,7 +40,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> register(String name, String email, String password) async {
+  Future<bool> register(String name, String email, String password, String text) async {
     // Simulate API call
     await Future.delayed(const Duration(seconds: 2));
 

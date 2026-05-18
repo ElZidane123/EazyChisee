@@ -144,18 +144,27 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
   Widget build(BuildContext context) {
     final score = _finalScore;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.bg,
       appBar: AppBar(
-        title: const Text('Trust Score 360°',
-            style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text(
+          'Trust Score 360°',
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+            fontSize: 17,
+          ),
+        ),
         backgroundColor: AppColors.surface,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        shape: const Border(bottom: BorderSide(color: AppColors.border, width: 1)),
         bottom: TabBar(
           controller: _tab,
           labelColor: AppColors.primary,
           unselectedLabelColor: AppColors.textSub,
           indicatorColor: AppColors.primary,
+          indicatorSize: TabBarIndicatorSize.tab,
           tabs: const [
             Tab(text: 'Form 47 Parameter'),
             Tab(text: 'Hasil Analisis'),
@@ -172,9 +181,15 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _tab.animateTo(1),
         backgroundColor: AppColors.primary,
-        icon: const Icon(Icons.analytics_rounded, color: Colors.white),
-        label: const Text('Lihat Hasil',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+        icon: const Icon(Icons.analytics_rounded, color: Colors.white, size: 20),
+        label: const Text(
+          'Lihat Hasil',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13),
+        ),
       ),
     );
   }
@@ -184,47 +199,51 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: _cats.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (_, ci) {
         final cat = _cats[ci];
-        return Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
+        return Container(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: AppColors.divider),
+            border: Border.all(color: AppColors.border),
+            boxShadow: AppColors.shadowSm,
           ),
-          child: ExpansionTile(
-            tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            leading: Container(
-              width: 40, height: 40,
-              decoration: BoxDecoration(
-                color: cat.color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
+          child: Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              leading: Container(
+                width: 40, height: 40,
+                decoration: BoxDecoration(
+                  color: cat.color.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(child: Text(cat.icon, style: const TextStyle(fontSize: 20))),
               ),
-              child: Center(child: Text(cat.icon, style: const TextStyle(fontSize: 20))),
-            ),
-            title: Text(cat.name,
-                style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
-            subtitle: Row(children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: cat.score,
-                    backgroundColor: AppColors.divider,
-                    valueColor: AlwaysStoppedAnimation(cat.color),
-                    minHeight: 5,
+              title: Text(cat.name,
+                  style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+              subtitle: Row(children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: cat.score,
+                      backgroundColor: AppColors.border,
+                      valueColor: AlwaysStoppedAnimation(cat.color),
+                      minHeight: 5,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Text('${(cat.score * 100).toStringAsFixed(0)}%',
-                  style: TextStyle(fontSize: 12, color: cat.color, fontWeight: FontWeight.w700)),
-              Text(' · ${(cat.weight * 100).toStringAsFixed(0)}% bobot',
-                  style: const TextStyle(fontSize: 11, color: AppColors.textHint)),
-            ]),
-            children: cat.params.map((p) => _buildParamRow(p, cat.color)).toList(),
+                const SizedBox(width: 8),
+                Text('${(cat.score * 100).toStringAsFixed(0)}%',
+                    style: TextStyle(fontSize: 12, color: cat.color, fontWeight: FontWeight.w700)),
+                Text(' · ${(cat.weight * 100).toStringAsFixed(0)}% bobot',
+                    style: const TextStyle(fontSize: 11, color: AppColors.textHint)),
+              ]),
+              children: cat.params.map((p) => _buildParamRow(p, cat.color)).toList(),
+            ),
           ),
         );
       },
@@ -257,7 +276,7 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
                 trackHeight: 4,
                 thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
                 activeTrackColor: color,
-                inactiveTrackColor: AppColors.divider,
+                inactiveTrackColor: AppColors.border,
                 thumbColor: color,
                 overlayColor: color.withOpacity(0.1),
               ),
@@ -294,26 +313,28 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [_tierColor, _tierColor.withOpacity(0.75)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: _tierColor.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 8))],
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: AppColors.shadowPrimary,
       ),
       child: Column(children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           const Text('Trust Score 360°',
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16)),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.25),
-              borderRadius: BorderRadius.circular(20),
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(6),
             ),
-            child: Text(_tier,
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)),
+            child: Text(
+              _tier,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 11,
+              ),
+            ),
           ),
         ]),
         const SizedBox(height: 20),
@@ -324,7 +345,7 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
               width: 130, height: 130,
               child: CircularProgressIndicator(
                 value: score / 100,
-                strokeWidth: 12,
+                strokeWidth: 10,
                 backgroundColor: Colors.white.withOpacity(0.2),
                 valueColor: const AlwaysStoppedAnimation(Colors.white),
                 strokeCap: StrokeCap.round,
@@ -361,8 +382,9 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.divider),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+        boxShadow: AppColors.shadowSm,
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const Text('Radar 6 Dimensi',
@@ -375,9 +397,9 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
               radarShape: RadarShape.polygon,
               tickCount: 4,
               ticksTextStyle: const TextStyle(fontSize: 0, color: Colors.transparent),
-              tickBorderData: BorderSide(color: AppColors.divider.withOpacity(0.5)),
-              gridBorderData: BorderSide(color: AppColors.divider, width: 1),
-              radarBorderData: BorderSide(color: AppColors.divider),
+              tickBorderData: BorderSide(color: AppColors.border.withOpacity(0.5)),
+              gridBorderData: BorderSide(color: AppColors.border, width: 1),
+              radarBorderData: BorderSide(color: AppColors.border),
               radarBackgroundColor: Colors.transparent,
               getTitle: (index, angle) => RadarChartTitle(
                 text: _cats[index].name,
@@ -409,8 +431,9 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.divider),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+        boxShadow: AppColors.shadowSm,
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const Text('Breakdown Per Kategori',
@@ -432,7 +455,7 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary))),
           Text('${(c.score * 100).toStringAsFixed(0)}',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: c.color)),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: AppColors.primary)),
           Text('/100',
               style: const TextStyle(fontSize: 12, color: AppColors.textHint)),
         ]),
@@ -441,8 +464,8 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
           borderRadius: BorderRadius.circular(6),
           child: LinearProgressIndicator(
             value: c.score,
-            backgroundColor: AppColors.divider,
-            valueColor: AlwaysStoppedAnimation(c.color),
+            backgroundColor: AppColors.border,
+            valueColor: const AlwaysStoppedAnimation(AppColors.primary),
             minHeight: 8,
           ),
         ),
@@ -468,8 +491,9 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.errorBg,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.error.withOpacity(0.2)),
+        boxShadow: AppColors.shadowSm,
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
@@ -494,8 +518,8 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: AppColors.surface,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.error.withOpacity(0.15)),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.border),
             ),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(
@@ -541,11 +565,12 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 0,
             ),
             icon: const Icon(Icons.share_rounded, size: 18),
             label: const Text('Simpan & Bagikan ke Franchisee',
-                style: TextStyle(fontWeight: FontWeight.w700)),
+                style: TextStyle(fontWeight: FontWeight.w600)),
           ),
         ),
       ]),

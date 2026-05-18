@@ -1,57 +1,105 @@
 // ════════════════════════════════════════════════════════════════
-//  EazyChise · Design Tokens
-//  Theme  : Clean Minimal · Light Mode
-//  Primary: #16A34A  (brand green — used sparingly as accent)
-//  BG     : #FAFAFA  (near-white neutral — no color tint)
-//  Accent : #F59E0B  (warm amber — highlight & ROI only)
+//  EazyChise · Design System v2.0
+//  Theme  : Clean Emerald — Premium Fintech
+//  Filosofi: Less color, more space, more trust
 // ════════════════════════════════════════════════════════════════
 import 'package:flutter/material.dart';
 
 class AppColors {
   AppColors._();
 
+  // ── Core Brand ───────────────────────────────────────────────
+  // Satu warna utama, digunakan HANYA untuk CTA dan highlight
+  static const Color primary      = Color(0xFF0F7A4B); // deep emerald
+  static const Color primaryLight = Color(0xFF1A9E5C); // medium emerald (hover)
+  static const Color primaryDark  = Color(0xFF085C38); // pressed state
+  static const Color primaryBg    = Color(0xFFF0FAF5); // sangat soft, untuk chip/tag
+
   // ── Backgrounds ─────────────────────────────────────────────
-  static const Color bg          = Color(0xFFFAFAFA); // near-white neutral
-  static const Color surface     = Color(0xFFFFFFFF); // pure white card
-  static const Color surfaceDim  = Color(0xFFF4F4F5); // subtle gray fill
-  static const Color divider     = Color(0xFFE4E4E7); // clean neutral divider
+  // PENTING: hampir semua screen pakai bg, bukan surface berwarna
+  static const Color bg           = Color(0xFFF8F9FA); // off-white netral
+  static const Color surface      = Color(0xFFFFFFFF); // card putih bersih
+  static const Color surfaceHover = Color(0xFFF2F4F6); // hover state card
+  static const Color surfaceDim   = Color(0xFFF1F3F4); // dim surface
 
-  // ── Primary  : Brand Green (used only for CTAs & brand marks) ─
-  static const Color primary      = Color(0xFF16A34A); // brand green
-  static const Color primaryLight = Color(0xFF22C55E); // hover / lighter state
-  static const Color primaryDark  = Color(0xFF15803D); // pressed / deep state
-  static const Color primaryBg    = Color(0xFFF0FDF4); // very faint green fill
+  // ── Borders & Dividers ───────────────────────────────────────
+  static const Color border       = Color(0xFFE8EAED); // garis tipis netral
+  static const Color borderFocus  = Color(0xFF0F7A4B); // border saat focus input
+  static const Color divider      = Color(0xFFF1F3F4); // divider sangat tipis
 
-  // ── Accent   : Warm Amber (highlights, ROI, star — rare use) ──
-  static const Color accent       = Color(0xFFF59E0B);
-  static const Color accentLight  = Color(0xFFFBBF24);
-  static const Color accentBg     = Color(0xFFFFFBEB);
+  // ── Text ────────────────────────────────────────────────────
+  static const Color textPrimary  = Color(0xFF1A1D1F); // hampir hitam
+  static const Color textSub      = Color(0xFF6C737A); // abu medium
+  static const Color textHint     = Color(0xFFB0B7BF); // placeholder
+  static const Color textOnDark   = Color(0xFFFFFFFF); // teks di atas primary
 
-  // ── Text  (neutral grays — no color tinting) ─────────────────
-  static const Color textPrimary  = Color(0xFF18181B); // near-black
-  static const Color textSub      = Color(0xFF71717A); // medium gray
-  static const Color textHint     = Color(0xFFA1A1AA); // light placeholder
+  // ── Semantic (FLAT, tidak pakai gradient) ────────────────────
+  static const Color success      = Color(0xFF0F7A4B);
+  static const Color successBg    = Color(0xFFF0FAF5);
+  static const Color successText  = Color(0xFF085C38);
 
-  // ── Semantic ─────────────────────────────────────────────────
-  static const Color success      = Color(0xFF16A34A);
-  static const Color successBg    = Color(0xFFF0FDF4);
-  static const Color warning      = Color(0xFFD97706);
+  static const Color warning      = Color(0xFFB45309);
   static const Color warningBg    = Color(0xFFFFFBEB);
-  static const Color error        = Color(0xFFDC2626);
-  static const Color errorBg      = Color(0xFFFEF2F2);
-  static const Color info         = Color(0xFF0284C7);
+  static const Color warningText  = Color(0xFF92400E);
 
-  // ── Gradients (2 only — kept intentionally minimal) ──────────
-  static const List<Color> grad        = [Color(0xFF16A34A), Color(0xFF22C55E)];
-  static const List<Color> gradDeep    = [Color(0xFF14532D), Color(0xFF16A34A)];
+  static const Color error        = Color(0xFFB91C1C);
+  static const Color errorBg      = Color(0xFFFFF5F5);
+  static const Color errorText    = Color(0xFF7F1D1D);
 
-  // ── Legacy compat aliases (kept for backward compatibility) ───
-  static const List<Color> gradMint    = [Color(0xFF22C55E), Color(0xFFBBF7D0)];
-  static const List<Color> gradGold    = [Color(0xFFD97706), Color(0xFFF59E0B)];
-  static const List<Color> gradSky     = [Color(0xFF0284C7), Color(0xFF38BDF8)];
-  static const List<Color> gradCoral   = [Color(0xFFE11D48), Color(0xFFFB7185)];
+  static const Color info         = Color(0xFF1D4ED8);
+  static const Color infoBg       = Color(0xFFEFF6FF);
+  static const Color infoText     = Color(0xFF1E3A8A);
+
+  // ── Accent (SANGAT terbatas — hanya untuk badge ROI/gold) ────
+  static const Color gold         = Color(0xFFB45309);
+  static const Color goldBg       = Color(0xFFFFFBEB);
+
+  // ── Gradient (HANYA untuk header utama — gunakan hemat) ──────
+  // Maksimal dipakai 1 kali per screen, sisanya flat
+  static const List<Color> gradPrimary = [
+    Color(0xFF0F7A4B),
+    Color(0xFF1A9E5C),
+  ];
+
+  // ── Shadows (ganti gradient dengan shadow yang tepat) ────────
+  static List<BoxShadow> shadowSm = [
+    BoxShadow(
+      color: Color(0xFF1A1D1F).withOpacity(0.06),
+      blurRadius: 8,
+      offset: Offset(0, 2),
+    ),
+  ];
+
+  static List<BoxShadow> shadowMd = [
+    BoxShadow(
+      color: Color(0xFF1A1D1F).withOpacity(0.08),
+      blurRadius: 16,
+      offset: Offset(0, 4),
+    ),
+  ];
+
+  static List<BoxShadow> shadowPrimary = [
+    BoxShadow(
+      color: Color(0xFF0F7A4B).withOpacity(0.25),
+      blurRadius: 16,
+      offset: Offset(0, 6),
+    ),
+  ];
+
+  // ── Legacy aliases (agar kode lama tidak error) ───────────────
   static const Color background       = bg;
-  static const Color gradientStart    = Color(0xFF16A34A);
-  static const Color gradientEnd      = Color(0xFF22C55E);
+  static const Color accent           = gold;
+  static const Color accentLight      = Color(0xFFD97706);
+  static const Color accentBg         = goldBg;
   static const Color textSecondary    = textSub;
+  static const Color gradientStart    = Color(0xFF0F7A4B);
+  static const Color gradientEnd      = Color(0xFF1A9E5C);
+  static const List<Color> grad       = [
+    Color(0xFF0F7A4B),
+    Color(0xFF1A9E5C),
+  ];
+  static const List<Color> gradDeep   = [
+    Color(0xFF085C38),
+    Color(0xFF0F7A4B),
+  ];
 }
