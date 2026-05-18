@@ -36,7 +36,7 @@ List<_Cat> _buildCats() => [
     _Param('il','Izin Lokasi',_PT.bool_),
     _Param('sh','Sertifikat Halal (jika F&B)',_PT.bool_),
   ]),
-  _Cat('Keuangan', '💰', 0.25, AppColors.accent, [
+  _Cat('Keuangan', '💰', 0.25, AppColors.gold, [
     _Param('omz','Omzet 12 Bulan Terakhir',_PT.scale),
     _Param('lb','Laba Bersih',_PT.scale),
     _Param('dr','Debt Ratio',_PT.scale),
@@ -123,15 +123,6 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
     return 'BRONZE';
   }
 
-  Color get _tierColor {
-    switch (_tier) {
-      case 'PLATINUM': return const Color(0xFF6366F1);
-      case 'GOLD':     return AppColors.accent;
-      case 'SILVER':   return AppColors.textSub;
-      default:         return const Color(0xFFCD7F32);
-    }
-  }
-
   List<MapEntry<String, double>> get _top3Risks {
     final risks = _cats
         .map((c) => MapEntry(c.name, c.score))
@@ -150,8 +141,9 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
           'Trust Score 360°',
           style: TextStyle(
             color: AppColors.textPrimary,
-            fontWeight: FontWeight.w600,
-            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+            letterSpacing: -0.3,
           ),
         ),
         backgroundColor: AppColors.surface,
@@ -165,6 +157,9 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
           unselectedLabelColor: AppColors.textSub,
           indicatorColor: AppColors.primary,
           indicatorSize: TabBarIndicatorSize.tab,
+          dividerColor: Colors.transparent,
+          labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
           tabs: const [
             Tab(text: 'Form 47 Parameter'),
             Tab(text: 'Hasil Analisis'),
@@ -173,6 +168,7 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
       ),
       body: TabBarView(
         controller: _tab,
+        physics: const BouncingScrollPhysics(),
         children: [
           _buildForm(),
           _buildResults(score),
@@ -181,14 +177,14 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _tab.animateTo(1),
         backgroundColor: AppColors.primary,
-        elevation: 0,
+        elevation: 4,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
         ),
         icon: const Icon(Icons.analytics_rounded, color: Colors.white, size: 20),
         label: const Text(
           'Lihat Hasil',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14),
         ),
       ),
     );
@@ -197,52 +193,59 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
   // ── FORM TAB ─────────────────────────────────────────────────
   Widget _buildForm() {
     return ListView.separated(
-      padding: const EdgeInsets.all(16),
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.all(20),
       itemCount: _cats.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, __) => const SizedBox(height: 16),
       itemBuilder: (_, ci) {
         final cat = _cats[ci];
         return Container(
           decoration: BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(color: AppColors.border),
             boxShadow: AppColors.shadowSm,
           ),
           child: Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
-              tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              childrenPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              iconColor: AppColors.primary,
+              collapsedIconColor: AppColors.textSub,
               leading: Container(
-                width: 40, height: 40,
+                width: 44, height: 44,
                 decoration: BoxDecoration(
-                  color: cat.color.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(10),
+                  color: cat.color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: Center(child: Text(cat.icon, style: const TextStyle(fontSize: 20))),
+                child: Center(child: Text(cat.icon, style: const TextStyle(fontSize: 22))),
               ),
               title: Text(cat.name,
-                  style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
-              subtitle: Row(children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: cat.score,
-                      backgroundColor: AppColors.border,
-                      valueColor: AlwaysStoppedAnimation(cat.color),
-                      minHeight: 5,
+                  style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.textPrimary, fontSize: 15)),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Row(children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: cat.score,
+                        backgroundColor: AppColors.surfaceDim,
+                        valueColor: AlwaysStoppedAnimation(cat.color),
+                        minHeight: 6,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Text('${(cat.score * 100).toStringAsFixed(0)}%',
-                    style: TextStyle(fontSize: 12, color: cat.color, fontWeight: FontWeight.w700)),
-                Text(' · ${(cat.weight * 100).toStringAsFixed(0)}% bobot',
-                    style: const TextStyle(fontSize: 11, color: AppColors.textHint)),
-              ]),
-              children: cat.params.map((p) => _buildParamRow(p, cat.color)).toList(),
+                  const SizedBox(width: 10),
+                  Text('${(cat.score * 100).toStringAsFixed(0)}%',
+                      style: TextStyle(fontSize: 13, color: cat.color, fontWeight: FontWeight.w800)),
+                ]),
+              ),
+              children: [
+                const SizedBox(height: 12),
+                ...cat.params.map((p) => _buildParamRow(p, cat.color)).toList(),
+              ],
             ),
           ),
         );
@@ -252,13 +255,13 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
 
   Widget _buildParamRow(_Param p, Color color) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
             Expanded(child: Text(p.name,
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary))),
             if (p.type == _PT.bool_)
               Switch.adaptive(
@@ -267,16 +270,20 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
                 onChanged: (v) => setState(() => p.value = v ? 1.0 : 0.0),
               ),
             if (p.type == _PT.scale)
-              Text('${(p.value * 5).toStringAsFixed(1)}/5',
-                  style: TextStyle(fontSize: 13, color: color, fontWeight: FontWeight.w700)),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                child: Text('${(p.value * 5).toStringAsFixed(1)}/5',
+                    style: TextStyle(fontSize: 13, color: color, fontWeight: FontWeight.w800)),
+              )
           ]),
           if (p.type == _PT.scale)
             SliderTheme(
               data: SliderThemeData(
-                trackHeight: 4,
-                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+                trackHeight: 6,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
                 activeTrackColor: color,
-                inactiveTrackColor: AppColors.border,
+                inactiveTrackColor: AppColors.surfaceDim,
                 thumbColor: color,
                 overlayColor: color.withOpacity(0.1),
               ),
@@ -295,57 +302,69 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
   // ── RESULTS TAB ──────────────────────────────────────────────
   Widget _buildResults(double score) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.all(20),
       child: Column(children: [
         _buildScoreCard(score),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         _buildRadarCard(),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         _buildBreakdownCard(),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         _buildRiskCard(),
-        const SizedBox(height: 80),
+        const SizedBox(height: 80), // For FAB
       ]),
     );
   }
 
   Widget _buildScoreCard(double score) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: AppColors.shadowPrimary,
+        gradient: const LinearGradient(
+          colors: AppColors.grad,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           const Text('Trust Score 360°',
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16)),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               _tier,
               style: const TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                fontSize: 12,
+                letterSpacing: 1,
               ),
             ),
           ),
         ]),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
         SizedBox(
-          height: 130,
+          height: 140,
           child: Stack(alignment: Alignment.center, children: [
             SizedBox(
-              width: 130, height: 130,
+              width: 140, height: 140,
               child: CircularProgressIndicator(
                 value: score / 100,
-                strokeWidth: 10,
+                strokeWidth: 12,
                 backgroundColor: Colors.white.withOpacity(0.2),
                 valueColor: const AlwaysStoppedAnimation(Colors.white),
                 strokeCap: StrokeCap.round,
@@ -353,16 +372,16 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
             ),
             Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               Text(score.toStringAsFixed(1),
-                  style: const TextStyle(color: Colors.white, fontSize: 38,
-                      fontWeight: FontWeight.w900, height: 1)),
-              const Text('/100', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                  style: const TextStyle(color: Colors.white, fontSize: 42,
+                      fontWeight: FontWeight.w900, height: 1, letterSpacing: -1)),
+              const Text('/100', style: TextStyle(color: Colors.white70, fontSize: 15, fontWeight: FontWeight.w600)),
             ]),
           ]),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         Text(_tierDescription,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.5)),
+            style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.5, fontWeight: FontWeight.w500)),
       ]),
     );
   }
@@ -379,17 +398,17 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
   Widget _buildRadarCard() {
     final catScores = _cats.map((c) => c.score).toList();
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppColors.border),
         boxShadow: AppColors.shadowSm,
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const Text('Radar 6 Dimensi',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
-        const SizedBox(height: 16),
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.textPrimary, letterSpacing: -0.3)),
+        const SizedBox(height: 20),
         SizedBox(
           height: 240,
           child: RadarChart(
@@ -398,14 +417,14 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
               tickCount: 4,
               ticksTextStyle: const TextStyle(fontSize: 0, color: Colors.transparent),
               tickBorderData: BorderSide(color: AppColors.border.withOpacity(0.5)),
-              gridBorderData: BorderSide(color: AppColors.border, width: 1),
-              radarBorderData: BorderSide(color: AppColors.border),
+              gridBorderData: const BorderSide(color: AppColors.border, width: 1),
+              radarBorderData: const BorderSide(color: AppColors.border),
               radarBackgroundColor: Colors.transparent,
               getTitle: (index, angle) => RadarChartTitle(
                 text: _cats[index].name,
                 angle: angle,
               ),
-              titleTextStyle: const TextStyle(fontSize: 11, color: AppColors.textSub,
+              titleTextStyle: const TextStyle(fontSize: 12, color: AppColors.textSub,
                   fontWeight: FontWeight.w600),
               titlePositionPercentageOffset: 0.2,
               dataSets: [
@@ -428,17 +447,17 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
 
   Widget _buildBreakdownCard() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppColors.border),
         boxShadow: AppColors.shadowSm,
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const Text('Breakdown Per Kategori',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
-        const SizedBox(height: 16),
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.textPrimary, letterSpacing: -0.3)),
+        const SizedBox(height: 20),
         ..._cats.map((c) => _buildCatBar(c)),
       ]),
     );
@@ -446,33 +465,33 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
 
   Widget _buildCatBar(_Cat c) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Text(c.icon, style: const TextStyle(fontSize: 16)),
-          const SizedBox(width: 8),
+          Text(c.icon, style: const TextStyle(fontSize: 18)),
+          const SizedBox(width: 10),
           Expanded(child: Text(c.name,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary))),
           Text('${(c.score * 100).toStringAsFixed(0)}',
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: AppColors.primary)),
-          Text('/100',
-              style: const TextStyle(fontSize: 12, color: AppColors.textHint)),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.primary)),
+          const Text('/100',
+              style: TextStyle(fontSize: 13, color: AppColors.textHint, fontWeight: FontWeight.w600)),
         ]),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         ClipRRect(
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: BorderRadius.circular(8),
           child: LinearProgressIndicator(
             value: c.score,
-            backgroundColor: AppColors.border,
-            valueColor: const AlwaysStoppedAnimation(AppColors.primary),
-            minHeight: 8,
+            backgroundColor: AppColors.surfaceDim,
+            valueColor: AlwaysStoppedAnimation(c.color),
+            minHeight: 10,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         Text('Bobot: ${(c.weight * 100).toStringAsFixed(0)}% · '
             'Kontribusi: ${(c.score * c.weight * 100).toStringAsFixed(1)} poin',
-            style: const TextStyle(fontSize: 11, color: AppColors.textHint)),
+            style: const TextStyle(fontSize: 12, color: AppColors.textSub, fontWeight: FontWeight.w500)),
       ]),
     );
   }
@@ -485,78 +504,78 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
       'Operasional': 'Standarisasi SOP dan tingkatkan kualitas training franchisee.',
       'Reputasi': 'Aktifkan strategi ulasan pelanggan dan media sosial secara konsisten.',
       'Skalabilitas': 'Kembangkan sistem duplikasi dan jangkauan distribusi bahan baku.',
-      'Dukungan Mitra': 'Bentuk tim support dedicat dan jadwalkan kunjungan rutin ke outlet.',
+      'Dukungan Mitra': 'Bentuk tim support dedicated dan jadwalkan kunjungan rutin.',
     };
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.errorBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.error.withOpacity(0.2)),
-        boxShadow: AppColors.shadowSm,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.error.withOpacity(0.3)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.error.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
+              color: AppColors.error.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.warning_amber_rounded, color: AppColors.error, size: 20),
+            child: const Icon(Icons.warning_amber_rounded, color: AppColors.error, size: 22),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 14),
           const Text('3 Risiko Terbesar',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.error, letterSpacing: -0.3)),
         ]),
-        const SizedBox(height: 14),
+        const SizedBox(height: 20),
         ...risks.asMap().entries.map((e) {
           final rank = e.key + 1;
           final risk = e.value;
           return Container(
-            margin: const EdgeInsets.only(bottom: 10),
-            padding: const EdgeInsets.all(14),
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: AppColors.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.error.withOpacity(0.2)),
+              boxShadow: AppColors.shadowSm,
             ),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(
-                width: 28, height: 28,
+                width: 32, height: 32,
                 decoration: BoxDecoration(
                   color: AppColors.error.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Center(child: Text('#$rank',
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800,
+                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800,
                         color: AppColors.error))),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 14),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(children: [
                   Text(risk.key,
                       style: const TextStyle(fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary, fontSize: 14)),
+                          color: AppColors.textPrimary, fontSize: 15)),
                   const Spacer(),
                   Text('${(risk.value * 100).toStringAsFixed(0)}/100',
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700,
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800,
                           color: AppColors.error)),
                 ]),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(riskHints[risk.key] ?? '',
-                    style: const TextStyle(fontSize: 12, color: AppColors.textSub, height: 1.4)),
+                    style: const TextStyle(fontSize: 13, color: AppColors.textSub, height: 1.5, fontWeight: FontWeight.w500)),
               ])),
             ]),
           );
         }),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('PDF ringkasan berhasil dibuat'),
+                content: Text('PDF ringkasan berhasil dibuat', style: TextStyle(fontWeight: FontWeight.w600)),
                 backgroundColor: AppColors.primary,
                 behavior: SnackBarBehavior.floating,
               ),
@@ -564,13 +583,13 @@ class _TrustScoreScreenState extends State<TrustScoreScreen>
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              elevation: 0,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              elevation: 4,
             ),
-            icon: const Icon(Icons.share_rounded, size: 18),
+            icon: const Icon(Icons.share_rounded, size: 20),
             label: const Text('Simpan & Bagikan ke Franchisee',
-                style: TextStyle(fontWeight: FontWeight.w600)),
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
           ),
         ),
       ]),

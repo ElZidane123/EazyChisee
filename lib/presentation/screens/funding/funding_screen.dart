@@ -69,7 +69,7 @@ class _FundingScreenState extends State<FundingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.bg,
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
@@ -507,7 +507,7 @@ class _FundingScreenState extends State<FundingScreen>
                           // Franchise Dropdown
                           Container(
                             decoration: BoxDecoration(
-                              color: AppColors.background,
+                              color: AppColors.bg,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                 color: AppColors.textHint.withOpacity(0.2),
@@ -573,7 +573,7 @@ class _FundingScreenState extends State<FundingScreen>
                           // Amount Field
                           Container(
                             decoration: BoxDecoration(
-                              color: AppColors.background,
+                              color: AppColors.bg,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                 color: AppColors.textHint.withOpacity(0.2),

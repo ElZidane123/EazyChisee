@@ -489,8 +489,9 @@ class _FranchiseSimulatorScreenState extends State<FranchiseSimulatorScreen> {
                     sideTitles: SideTitles(
                       showTitles: true,
                       getTitlesWidget: (v, meta) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8),
+                        return SideTitleWidget(
+                          meta: meta,
+                          space: 8.0,
                           child: Text('B${v.toInt()}', style: const TextStyle(fontSize: 10, color: AppColors.textSub)),
                         );
                       },

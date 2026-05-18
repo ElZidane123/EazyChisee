@@ -92,7 +92,7 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.bg,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -102,11 +102,13 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
             floating: true,
             backgroundColor: AppColors.surface,
             elevation: 0,
+            scrolledUnderElevation: 1,
             title: const Text(
               'Simulasi BEP',
               style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                fontSize: 18,
+                letterSpacing: -0.3,
                 color: AppColors.textPrimary,
               ),
             ),
@@ -121,6 +123,7 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
                   onPressed: _resetForm,
                   color: AppColors.primary,
                 ),
+              const SizedBox(width: 8),
             ],
           ),
 
@@ -164,10 +167,10 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: AppColors.border, width: 1),
           boxShadow: AppColors.shadowSm,
         ),
@@ -176,7 +179,7 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primaryBg,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(
@@ -198,12 +201,13 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  SizedBox(height: 6),
                   Text(
                     'Hitung kapan investasi Franchisemu akan kembali',
                     style: TextStyle(
-                      color: AppColors.textSecondary,
+                      color: AppColors.textSub,
                       fontSize: 13,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
@@ -227,10 +231,10 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: AppColors.border, width: 1),
           boxShadow: AppColors.shadowSm,
         ),
@@ -240,20 +244,22 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
             const Text(
               'Masukkan Data Investasi',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 17,
                 fontWeight: FontWeight.w700,
                 color: AppColors.textPrimary,
+                letterSpacing: -0.3,
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
+            const SizedBox(height: 6),
+            const Text(
               'Isi semua field untuk melihat hasil simulasi',
               style: TextStyle(
-                color: AppColors.textSecondary,
+                color: AppColors.textSub,
                 fontSize: 13,
+                fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             
             // Investment Field
             _buildInputField(
@@ -280,11 +286,11 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
               controller: _monthlyCostController,
               label: 'Biaya Operasional Bulanan',
               hint: 'Contoh: 60000000',
-              icon: Icons.receipt_rounded,
+              icon: Icons.receipt_long_rounded,
               color: AppColors.warning,
             ),
             
-            const SizedBox(height: 24),
+            const SizedBox(height: 28),
             
             // Calculate Button
             SizedBox(
@@ -298,18 +304,18 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  elevation: 0,
+                  elevation: 4,
                 ),
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.calculate_rounded),
+                    Icon(Icons.calculate_rounded, size: 20),
                     SizedBox(width: 8),
                     Text(
                       'Hitung BEP',
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
@@ -334,12 +340,28 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
       keyboardType: TextInputType.number,
       style: const TextStyle(
         color: AppColors.textPrimary,
-        fontSize: 15,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
       ),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
+        hintStyle: const TextStyle(color: AppColors.textHint, fontWeight: FontWeight.w400),
         prefixIcon: Icon(icon, color: color, size: 22),
+        filled: true,
+        fillColor: AppColors.surfaceDim,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.transparent),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
       ),
     );
   }
@@ -353,10 +375,10 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
     return FadeTransition(
       opacity: _fadeAnimation,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(color: AppColors.border, width: 1),
           boxShadow: AppColors.shadowSm,
         ),
@@ -367,9 +389,9 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primaryBg,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
@@ -382,30 +404,31 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
                 const Text(
                   'Hasil Analisis',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 17,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textPrimary,
+                    letterSpacing: -0.3,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 28),
 
             // BEP Gauge
-            Container(
-              height: 120,
+            SizedBox(
+              height: 140,
               child: Stack(
                 children: [
                   // Background Circle
                   Center(
                     child: Container(
-                      width: 120,
-                      height: 120,
+                      width: 140,
+                      height: 140,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: AppColors.textHint.withOpacity(0.2),
-                          width: 8,
+                          color: AppColors.surfaceDim,
+                          width: 10,
                         ),
                       ),
                     ),
@@ -424,12 +447,13 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
                       curve: Curves.easeOutCubic,
                       builder: (context, double value, child) {
                         return SizedBox(
-                          width: 120,
-                          height: 120,
+                          width: 140,
+                          height: 140,
                           child: CircularProgressIndicator(
                             value: value,
-                            strokeWidth: 8,
+                            strokeWidth: 10,
                             backgroundColor: Colors.transparent,
+                            strokeCap: StrokeCap.round,
                             valueColor: AlwaysStoppedAnimation<Color>(
                               _bepMonths.isFinite 
                                   ? AppColors.success 
@@ -448,19 +472,21 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
                       children: [
                         Text(
                           _bepMonths.isFinite
-                              ? '${_bepMonths.toStringAsFixed(1)}'
+                              ? _bepMonths.toStringAsFixed(1)
                               : '∞',
                           style: const TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 32,
+                            fontWeight: FontWeight.w800,
                             color: AppColors.primary,
+                            letterSpacing: -1,
                           ),
                         ),
                         const Text(
                           'Bulan',
                           style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textSecondary,
+                            fontSize: 13,
+                            color: AppColors.textSub,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
@@ -469,16 +495,16 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
 
             // Result Items Grid
             GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 1.6,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 1.5,
               children: [
                 _buildResultGridItem(
                   'BEP',
@@ -501,7 +527,7 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
                   Icons.calendar_month_rounded,
                 ),
                 _buildResultGridItem(
-                  'ROI',
+                  'ROI Tahunan',
                   '${roi.toStringAsFixed(1)}%',
                   AppColors.warning,
                   Icons.percent_rounded,
@@ -509,24 +535,28 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
               ],
             ),
             
-            const SizedBox(height: 20),
+            const SizedBox(height: 32),
 
             // Chart
             Container(
-              height: 180,
-              padding: const EdgeInsets.all(8),
+              height: 220,
+              padding: const EdgeInsets.only(top: 10, right: 10),
               child: LineChart(
                 LineChartData(
                   gridData: FlGridData(
                     show: true,
                     drawHorizontalLine: true,
-                    horizontalInterval: _profitPerMonth * 3,
+                    horizontalInterval: (_profitPerMonth > 0 && _profitPerMonth.isFinite)
+                        ? _profitPerMonth * 3
+                        : 1000000.0,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: AppColors.textHint.withOpacity(0.1),
+                        color: AppColors.border,
                         strokeWidth: 1,
+                        dashArray: [4, 4],
                       );
                     },
+                    drawVerticalLine: false,
                   ),
                   titlesData: FlTitlesData(
                     show: true,
@@ -534,11 +564,16 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (value, meta) {
-                          return Text(
-                            '${value.toInt()}',
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 10,
+                          return SideTitleWidget(
+                            meta: meta,
+                            space: 8.0,
+                            child: Text(
+                              'B${value.toInt()}',
+                              style: const TextStyle(
+                                color: AppColors.textSub,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           );
                         },
@@ -548,14 +583,20 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (value, meta) {
-                          return Text(
-                            '${(value / 1000000).toInt()}Jt',
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 10,
+                          return SideTitleWidget(
+                            meta: meta,
+                            space: 8.0,
+                            child: Text(
+                              '${(value / 1000000).toInt()}Jt',
+                              style: const TextStyle(
+                                color: AppColors.textSub,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           );
                         },
+                        reservedSize: 32,
                       ),
                     ),
                     topTitles: const AxisTitles(
@@ -567,8 +608,9 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
                   ),
                   borderData: FlBorderData(
                     show: true,
-                    border: Border.all(
-                      color: AppColors.textHint.withOpacity(0.2),
+                    border: const Border(
+                      bottom: BorderSide(color: AppColors.border),
+                      left: BorderSide(color: AppColors.border),
                     ),
                   ),
                   lineBarsData: [
@@ -590,7 +632,14 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
                       ),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: AppColors.primary.withOpacity(0.1),
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.primary.withOpacity(0.2),
+                            AppColors.primary.withOpacity(0.0),
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
                       ),
                     ),
                     if (_bepMonths.isFinite)
@@ -603,7 +652,7 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
                         color: AppColors.success,
                         barWidth: 2,
                         dashArray: [5, 5],
-                        dotData: FlDotData(show: false),
+                        dotData: const FlDotData(show: false),
                       ),
                   ],
                 ),
@@ -617,7 +666,7 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
 
   List<FlSpot> _generateChartSpots() {
     final spots = <FlSpot>[];
-    final maxMonths = 24; // Tampilkan hingga 24 bulan
+    const maxMonths = 24; // Tampilkan hingga 24 bulan
     
     for (int i = 0; i <= maxMonths; i++) {
       spots.add(FlSpot(i.toDouble(), _profitPerMonth * i));
@@ -633,33 +682,35 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
     IconData icon,
   ) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.bg,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border, width: 1),
-        boxShadow: AppColors.shadowSm,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(height: 4),
+          Icon(icon, color: color, size: 24),
+          const SizedBox(height: 8),
           Text(
             value,
             style: const TextStyle(
               fontWeight: FontWeight.w700,
-              fontSize: 13,
+              fontSize: 14,
               color: AppColors.textPrimary,
+              letterSpacing: -0.2,
             ),
             textAlign: TextAlign.center,
             maxLines: 2,
           ),
+          const SizedBox(height: 2),
           Text(
             label,
             style: const TextStyle(
               color: AppColors.textSub,
-              fontSize: 9,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -669,10 +720,10 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
 
   Widget _buildTipsCard() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.border, width: 1),
         boxShadow: AppColors.shadowSm,
       ),
@@ -682,49 +733,50 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppColors.info.withOpacity(0.1),
+                  color: AppColors.info.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
-                  Icons.lightbulb_rounded,
+                  Icons.lightbulb_outline_rounded,
                   color: AppColors.info,
                   size: 20,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               const Text(
                 'Tips untuk Simulasi Akurat',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
+                  letterSpacing: -0.2,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           _buildTipItem(
             'Sertakan semua biaya awal seperti renovasi, peralatan, dan lisensi',
-            Icons.build_rounded,
+            Icons.build_circle_rounded,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           _buildTipItem(
             'Masukkan biaya marketing dan promosi dalam biaya operasional',
             Icons.campaign_rounded,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           _buildTipItem(
             'Pertimbangkan fluktuasi musiman dalam pendapatan',
             Icons.calendar_month_rounded,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           _buildTipItem(
             'Tambahkan buffer 10-20% untuk biaya tak terduga',
             Icons.shield_rounded,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           _buildTipItem(
             'BEP ideal untuk Franchise adalah 12-24 bulan',
             Icons.flag_rounded,
@@ -738,26 +790,20 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            color: AppColors.success.withOpacity(0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            icon,
-            size: 12,
-            color: AppColors.success,
-          ),
+        Icon(
+          icon,
+          size: 18,
+          color: AppColors.success,
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             tip,
-            style: TextStyle(
-              color: AppColors.textSecondary,
+            style: const TextStyle(
+              color: AppColors.textSub,
               fontSize: 13,
               height: 1.4,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),

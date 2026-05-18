@@ -31,14 +31,11 @@ class _ProfileScreenState extends State<ProfileScreen>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 600),
     )..forward();
     
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOutCubic,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
     );
   }
 
@@ -54,9 +51,16 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    final user = authProvider.currentUser!;
+    final user = authProvider.currentUser;
 
-    // Initialize controllers with user data
+    if (user == null) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+      );
+    }
+
     if (_nameController.text.isEmpty) {
       _nameController.text = user.name;
       _emailController.text = user.email;
@@ -74,31 +78,27 @@ class _ProfileScreenState extends State<ProfileScreen>
           'Profil Saya',
           style: TextStyle(
             color: AppColors.textPrimary,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
             fontSize: 17,
+            letterSpacing: -0.3,
           ),
         ),
         actions: [
           IconButton(
             icon: Icon(
               _isEditing ? Icons.check_rounded : Icons.edit_rounded,
-              color: _isEditing ? AppColors.success : AppColors.primary,
+              color: _isEditing ? AppColors.success : AppColors.textPrimary,
+              size: 22,
             ),
             onPressed: () {
-              setState(() {
-                _isEditing = !_isEditing;
-              });
-              
+              setState(() => _isEditing = !_isEditing);
               if (!_isEditing) {
-                // Save changes
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: const Text('Profil berhasil diperbarui'),
-                    backgroundColor: AppColors.success,
+                    backgroundColor: AppColors.textPrimary,
                     behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     margin: const EdgeInsets.all(20),
                   ),
                 );
@@ -122,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: AppColors.border),
                     boxShadow: AppColors.shadowSm,
                   ),
@@ -134,34 +134,25 @@ class _ProfileScreenState extends State<ProfileScreen>
                           Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: AppColors.border, width: 2),
+                              border: Border.all(color: AppColors.primary.withOpacity(0.1), width: 3),
                             ),
                             child: CircleAvatar(
-                              radius: 50,
-                              backgroundColor: AppColors.surfaceDim,
-                              backgroundImage: user.photoUrl != null
-                                  ? NetworkImage(user.photoUrl!)
-                                  : null,
+                              radius: 46,
+                              backgroundColor: AppColors.primaryBg,
+                              backgroundImage: user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
                               child: user.photoUrl == null
                                   ? Text(
                                       user.name[0].toUpperCase(),
-                                      style: const TextStyle(
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.primary,
-                                      ),
+                                      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800, color: AppColors.primary),
                                     )
                                   : null,
                             ),
                           ),
                           if (_isEditing)
                             Positioned(
-                              bottom: 0,
-                              right: 0,
+                              bottom: 0, right: 0,
                               child: GestureDetector(
-                                onTap: () {
-                                  // Change photo
-                                },
+                                onTap: () {},
                                 child: Container(
                                   padding: const EdgeInsets.all(6),
                                   decoration: BoxDecoration(
@@ -169,11 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                     shape: BoxShape.circle,
                                     border: Border.all(color: AppColors.surface, width: 2),
                                   ),
-                                  child: const Icon(
-                                    Icons.camera_alt_rounded,
-                                    color: Colors.white,
-                                    size: 16,
-                                  ),
+                                  child: const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 16),
                                 ),
                               ),
                             ),
@@ -183,28 +170,16 @@ class _ProfileScreenState extends State<ProfileScreen>
                       if (!_isEditing) ...[
                         Text(
                           user.name,
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
-                            letterSpacing: -0.5,
-                          ),
+                          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.textPrimary, letterSpacing: -0.5),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          user.email,
-                          style: const TextStyle(
-                            color: AppColors.textSub,
-                            fontSize: 13,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          alignment: WrapAlignment.center,
+                        Text(user.email, style: const TextStyle(color: AppColors.textSub, fontSize: 14)),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             _buildRoleBadge(context),
+                            const SizedBox(width: 8),
                             _buildVerificationBadge(),
                           ],
                         ),
@@ -214,27 +189,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
                 const SizedBox(height: 20),
 
-                // Edit Form fields (if editing)
+                // Edit Form fields
                 if (_isEditing) ...[
-                  _buildEditableField(
-                    'Nama Lengkap',
-                    _nameController,
-                    Icons.person_outline_rounded,
-                  ),
+                  _buildEditableField('Nama Lengkap', _nameController, Icons.person_outline_rounded),
                   const SizedBox(height: 16),
-                  _buildEditableField(
-                    'Email',
-                    _emailController,
-                    Icons.email_outlined,
-                    enabled: false,
-                  ),
+                  _buildEditableField('Email', _emailController, Icons.email_outlined, enabled: false),
                   const SizedBox(height: 16),
-                  _buildEditableField(
-                    'Nomor Telepon',
-                    _phoneController,
-                    Icons.phone_outlined,
-                    keyboardType: TextInputType.phone,
-                  ),
+                  _buildEditableField('Nomor Telepon', _phoneController, Icons.phone_outlined, keyboardType: TextInputType.phone),
                   const SizedBox(height: 20),
                 ],
 
@@ -243,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: AppColors.border),
                     boxShadow: AppColors.shadowSm,
                   ),
@@ -251,53 +212,17 @@ class _ProfileScreenState extends State<ProfileScreen>
                     children: [
                       Row(
                         children: [
-                          Expanded(
-                            child: _buildStatItem(
-                              'Franchise Aktif',
-                              user.activeFranchises.toString(),
-                              Icons.storefront_rounded,
-                              AppColors.primary,
-                            ),
-                          ),
-                          Container(
-                            height: 40,
-                            width: 1,
-                            color: AppColors.border,
-                          ),
-                          Expanded(
-                            child: _buildStatItem(
-                              'Total Investasi',
-                              'Rp ${(user.totalInvestment / 1000000).toStringAsFixed(0)}Jt',
-                              Icons.trending_up_rounded,
-                              AppColors.success,
-                            ),
-                          ),
+                          Expanded(child: _buildStatItem('Franchise Aktif', user.activeFranchises.toString(), Icons.storefront_rounded, AppColors.primary)),
+                          Container(height: 40, width: 1, color: AppColors.border),
+                          Expanded(child: _buildStatItem('Total Investasi', 'Rp ${(user.totalInvestment / 1000000).toStringAsFixed(0)}Jt', Icons.trending_up_rounded, AppColors.success)),
                         ],
                       ),
-                      const Divider(height: 24, color: AppColors.border),
+                      const Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Divider(height: 1, color: AppColors.border)),
                       Row(
                         children: [
-                          Expanded(
-                            child: _buildStatItem(
-                              'Tingkat Sukses',
-                              '92%',
-                              Icons.analytics_rounded,
-                              AppColors.warning,
-                            ),
-                          ),
-                          Container(
-                            height: 40,
-                            width: 1,
-                            color: AppColors.border,
-                          ),
-                          Expanded(
-                            child: _buildStatItem(
-                              'Member Sejak',
-                              '2024',
-                              Icons.calendar_today_rounded,
-                              AppColors.accent,
-                            ),
-                          ),
+                          Expanded(child: _buildStatItem('Tingkat Sukses', '92%', Icons.analytics_rounded, AppColors.gold)),
+                          Container(height: 40, width: 1, color: AppColors.border),
+                          Expanded(child: _buildStatItem('Member Sejak', '2024', Icons.calendar_today_rounded, AppColors.primary)),
                         ],
                       ),
                     ],
@@ -305,89 +230,44 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
                 const SizedBox(height: 24),
 
-                // Section Title: Pengaturan
+                // Settings Menu
                 const Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     'Pengaturan Akun',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                      letterSpacing: -0.5,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary, letterSpacing: -0.3),
                   ),
                 ),
                 const SizedBox(height: 12),
 
-                // Menu list items
+                // Menu items
                 ...List.generate(
                   user.role == 'franchisor' ? 7 : 6,
                   (index) {
                     final menuItems = [
                       if (user.role == 'franchisor')
-                        {
-                          'icon': Icons.dashboard_rounded,
-                          'title': 'Dashboard Franchisor',
-                          'trailing': null,
-                          'color': AppColors.primary,
-                          'route': '/franchisor-dashboard',
-                        },
-                      {
-                        'icon': Icons.storefront_rounded,
-                        'title': 'Daftarkan Franchise Saya',
-                        'trailing': null,
-                        'color': AppColors.primary,
-                        'isVerification': true,
-                      },
-                      {
-                        'icon': Icons.bookmark_rounded,
-                        'title': 'Franchise Tersimpan',
-                        'trailing': '12',
-                        'color': AppColors.accent,
-                        'isVerification': false,
-                      },
-                      {
-                        'icon': Icons.notifications_rounded,
-                        'title': 'Notifikasi',
-                        'trailing': '3',
-                        'color': AppColors.warning,
-                        'isVerification': false,
-                      },
-                      {
-                        'icon': Icons.security_rounded,
-                        'title': 'Privasi & Keamanan',
-                        'trailing': null,
-                        'color': AppColors.success,
-                        'isVerification': false,
-                      },
-                      {
-                        'icon': Icons.help_rounded,
-                        'title': 'Pusat Bantuan',
-                        'trailing': null,
-                        'color': AppColors.info,
-                        'isVerification': false,
-                      },
-                      {
-                        'icon': Icons.info_rounded,
-                        'title': 'Tentang Aplikasi',
-                        'trailing': null,
-                        'color': AppColors.textSub,
-                        'isVerification': false,
-                      },
+                        {'icon': Icons.dashboard_rounded, 'title': 'Dashboard Franchisor', 'color': AppColors.primary, 'route': '/franchisor-dashboard'},
+                      {'icon': Icons.storefront_rounded, 'title': 'Daftarkan Franchise Saya', 'color': AppColors.primary, 'isVerification': true},
+                      {'icon': Icons.bookmark_rounded, 'title': 'Franchise Tersimpan', 'trailing': '12', 'color': AppColors.primaryDark},
+                      {'icon': Icons.notifications_rounded, 'title': 'Notifikasi', 'trailing': '3', 'color': AppColors.gold},
+                      {'icon': Icons.security_rounded, 'title': 'Privasi & Keamanan', 'color': AppColors.success},
+                      {'icon': Icons.help_rounded, 'title': 'Pusat Bantuan', 'color': AppColors.info},
+                      {'icon': Icons.info_rounded, 'title': 'Tentang Aplikasi', 'color': AppColors.textSub},
                     ];
 
+                    final item = menuItems[index];
                     return _buildMenuItem(
-                      icon: menuItems[index]['icon'] as IconData,
-                      title: menuItems[index]['title'] as String,
-                      trailing: menuItems[index]['trailing'] as String?,
-                      color: menuItems[index]['color'] as Color,
-                      isVerification: menuItems[index]['isVerification'] as bool? ?? false,
-                      onTap: menuItems[index]['route'] != null
-                          ? () => Navigator.pushNamed(context, menuItems[index]['route'] as String)
-                          : (menuItems[index]['isVerification'] == true
-                              ? _navigateToVerification
-                              : () {}),
+                      icon: item['icon'] as IconData,
+                      title: item['title'] as String,
+                      trailing: item['trailing'] as String?,
+                      color: item['color'] as Color,
+                      onTap: () {
+                        if (item['route'] != null) {
+                          Navigator.pushNamed(context, item['route'] as String);
+                        } else if (item['isVerification'] == true) {
+                          _navigateToVerification();
+                        }
+                      },
                     );
                   },
                 ),
@@ -396,22 +276,17 @@ class _ProfileScreenState extends State<ProfileScreen>
                 // Logout Button
                 OutlinedButton.icon(
                   onPressed: _showLogoutDialog,
-                  icon: const Icon(Icons.logout_rounded, size: 18),
-                  label: const Text(
-                    'Keluar Akun',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                  ),
+                  icon: const Icon(Icons.logout_rounded, size: 20),
+                  label: const Text('Keluar Akun', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.error,
                     side: const BorderSide(color: AppColors.error, width: 1.5),
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    minimumSize: const Size(double.infinity, 48),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    minimumSize: const Size(double.infinity, 52),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 32),
               ],
             ),
           ),
@@ -420,44 +295,36 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _buildEditableField(
-    String label,
-    TextEditingController controller,
-    IconData icon, {
-    bool enabled = true,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return TextFormField(
-      controller: controller,
-      enabled: enabled,
-      keyboardType: keyboardType,
-      style: const TextStyle(
-        color: AppColors.textPrimary,
-        fontSize: 15,
-      ),
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(
-          icon,
-          color: enabled ? AppColors.primary : AppColors.textHint,
-          size: 20,
+  void _navigateToVerification() {
+    final verificationProvider = Provider.of<VerificationProvider>(context, listen: false);
+    final user = Provider.of<AuthProvider>(context, listen: false).currentUser;
+    if (user == null) return;
+    
+    if (verificationProvider.currentStatus == null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const FranchiseVerificationScreen()));
+    } else {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const VerificationStatusScreen()));
+    }
+  }
+
+  Widget _buildEditableField(String label, TextEditingController controller, IconData icon, {bool enabled = true, TextInputType keyboardType = TextInputType.text}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+        const SizedBox(height: 6),
+        TextFormField(
+          controller: controller,
+          enabled: enabled,
+          keyboardType: keyboardType,
+          style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, color: enabled ? AppColors.textSub : AppColors.textHint, size: 20),
+            filled: true,
+            fillColor: enabled ? AppColors.surface : AppColors.surfaceDim,
+          ),
         ),
-        filled: true,
-        fillColor: enabled ? AppColors.bg : AppColors.surfaceDim,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      ),
+      ],
     );
   }
 
@@ -465,243 +332,73 @@ class _ProfileScreenState extends State<ProfileScreen>
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.08),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 20),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(color: color.withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
+          child: Icon(icon, color: color, size: 22),
         ),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-            letterSpacing: -0.5,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(
-            color: AppColors.textSub,
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        const SizedBox(height: 10),
+        Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.textPrimary, letterSpacing: -0.5)),
+        const SizedBox(height: 2),
+        Text(label, style: const TextStyle(color: AppColors.textSub, fontSize: 11, fontWeight: FontWeight.w500)),
       ],
     );
   }
 
-  Widget _buildMenuItem({
-    required IconData icon,
-    required String title,
-    String? trailing,
-    required Color color,
-    required VoidCallback onTap,
-    bool isVerification = false,
-  }) {
+  Widget _buildMenuItem({required IconData icon, required String title, String? trailing, required Color color, required VoidCallback onTap}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isVerification ? AppColors.primaryBg : AppColors.surface,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isVerification ? AppColors.primary.withOpacity(0.3) : AppColors.border,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.border),
         boxShadow: AppColors.shadowSm,
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 4,
-        ),
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: isVerification ? AppColors.primary.withOpacity(0.1) : color.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            icon,
-            color: isVerification ? AppColors.primary : color,
-            size: 20,
-          ),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: isVerification ? FontWeight.w600 : FontWeight.w500,
-            color: isVerification ? AppColors.primary : AppColors.textPrimary,
-          ),
-        ),
-        subtitle: isVerification
-            ? const Text(
-                'Daftarkan untuk tampil di marketplace',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: AppColors.textSub,
-                ),
-              )
-            : null,
-        trailing: trailing != null
-            ? Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  trailing,
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              )
-            : Icon(
-                Icons.chevron_right_rounded,
-                color: isVerification ? AppColors.primary : AppColors.textSecondary,
-                size: 20,
-              ),
-        onTap: onTap,
-      ),
-    );
-  }
-
-  void _showLogoutDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: const BoxDecoration(
-                    color: AppColors.errorBg,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.logout_rounded,
-                    color: AppColors.error,
-                    size: 32,
-                  ),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+                  child: Icon(icon, color: color, size: 20),
                 ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Keluar dari Aplikasi',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                    letterSpacing: -0.5,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                ),
+                if (trailing != null)
+                  Container(
+                    margin: const EdgeInsets.only(right: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(color: AppColors.error, borderRadius: BorderRadius.circular(12)),
+                    child: Text(trailing, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
                   ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Apakah Anda yakin ingin keluar?',
-                  style: TextStyle(
-                    color: AppColors.textSub,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.textSecondary,
-                          side: const BorderSide(
-                            color: AppColors.border,
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text('Batal'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Provider.of<AuthProvider>(context, listen: false).logout();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LoginScreen(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.error,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: const Text('Keluar'),
-                      ),
-                    ),
-                  ],
-                ),
+                const Icon(Icons.arrow_forward_ios_rounded, color: AppColors.textHint, size: 16),
               ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
   Widget _buildRoleBadge(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context, listen: false);
-    final isFranchisor = auth.isFranchisor;
-    final label = isFranchisor ? 'Pemilik UMKM' : 'Calon Franchisee';
-    final icon = isFranchisor ? Icons.store_rounded : Icons.person_rounded;
-    final color = isFranchisor ? const Color(0xFF7C3AED) : AppColors.primary;
-    final bg = isFranchisor ? const Color(0xFFF3E8FF) : AppColors.primaryBg;
-
+    final user = Provider.of<AuthProvider>(context).currentUser;
+    if (user == null) return const SizedBox.shrink();
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(6),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(color: AppColors.primaryBg, borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.primary.withOpacity(0.2))),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: color, size: 12),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          Icon(user.role == 'franchisor' ? Icons.storefront_rounded : Icons.person_rounded, color: AppColors.primary, size: 14),
+          const SizedBox(width: 6),
+          Text(user.role == 'franchisor' ? 'Franchisor' : 'Franchisee', style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w700)),
         ],
       ),
     );
@@ -709,84 +406,82 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   Widget _buildVerificationBadge() {
     return Consumer<VerificationProvider>(
-      builder: (_, provider, __) {
-        if (!provider.hasSubmission) return const SizedBox.shrink();
-        final status = provider.currentStatus!;
-        Color badgeColor;
-        Color badgeBg;
-        IconData badgeIcon;
-        String badgeLabel;
+      builder: (context, provider, _) {
+        final status = provider.currentStatus;
+        Color color;
+        String text;
+        IconData icon;
+
         switch (status) {
           case VerificationStatus.verified:
-            badgeColor = AppColors.primary;
-            badgeBg = AppColors.primaryBg;
-            badgeIcon = Icons.verified_rounded;
-            badgeLabel = 'Terverifikasi';
+            color = AppColors.success;
+            text = 'Terverifikasi';
+            icon = Icons.verified_rounded;
+            break;
+          case VerificationStatus.pending:
+          case VerificationStatus.underReview:
+            color = AppColors.warning;
+            text = 'Dalam Proses';
+            icon = Icons.pending_actions_rounded;
             break;
           case VerificationStatus.rejected:
-            badgeColor = AppColors.error;
-            badgeBg = AppColors.errorBg;
-            badgeIcon = Icons.cancel_rounded;
-            badgeLabel = 'Ditolak';
+            color = AppColors.error;
+            text = 'Ditolak';
+            icon = Icons.cancel_rounded;
             break;
           default:
-            badgeColor = AppColors.warning;
-            badgeBg = AppColors.warningBg;
-            badgeIcon = Icons.hourglass_empty_rounded;
-            badgeLabel = 'Diproses';
+            color = AppColors.textSub;
+            text = 'Belum Verifikasi';
+            icon = Icons.info_outline_rounded;
+            break;
         }
-        return GestureDetector(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const VerificationStatusScreen(),
-            ),
-          ),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: badgeBg,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(badgeIcon, color: badgeColor, size: 12),
-                const SizedBox(width: 4),
-                Text(
-                  badgeLabel,
-                  style: TextStyle(
-                    color: badgeColor,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(width: 2),
-                Icon(Icons.arrow_forward_ios_rounded,
-                    color: badgeColor, size: 8),
-              ],
-            ),
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(20), border: Border.all(color: color.withOpacity(0.2))),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: color, size: 14),
+              const SizedBox(width: 6),
+              Text(text, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w700)),
+            ],
           ),
         );
       },
     );
   }
 
-  void _navigateToVerification() {
-    final provider =
-        Provider.of<VerificationProvider>(context, listen: false);
-    if (provider.hasSubmission &&
-        provider.currentStatus != VerificationStatus.rejected) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const VerificationStatusScreen()),
-      );
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => const FranchiseVerificationScreen()),
-      );
-    }
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: AppColors.surface,
+        title: const Text('Keluar Akun', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+        content: const Text('Apakah Anda yakin ingin keluar dari akun EazyChise?', style: TextStyle(fontSize: 14, color: AppColors.textSub, height: 1.5)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Batal', style: TextStyle(color: AppColors.textSub, fontWeight: FontWeight.w600)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              final auth = Provider.of<AuthProvider>(context, listen: false);
+              await auth.logout();
+              if (mounted) Navigator.pushReplacementNamed(context, '/login');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.error,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              elevation: 0,
+            ),
+            child: const Text('Keluar', style: TextStyle(fontWeight: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
   }
 }

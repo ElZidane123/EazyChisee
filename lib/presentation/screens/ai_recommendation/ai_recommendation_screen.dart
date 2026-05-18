@@ -21,14 +21,14 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
   late Animation<Offset> _slideAnimation;
   
   // Data jawaban pengguna
-  Map<String, String> _answers = {};
+  final Map<String, String> _answers = {};
   List<FranchiseModel> _recommendations = [];
   
   final List<Map<String, dynamic>> _questions = [
     {
       'question': 'Berapa kisaran modal yang Anda siapkan?',
       'key': 'budget',
-      'icon': Icons.money_rounded,
+      'icon': Icons.account_balance_wallet_rounded,
       'options': [
         {'label': '< Rp 100 Juta', 'value': 'small', 'min': 0, 'max': 100000000, 'icon': Icons.savings_rounded},
         {'label': 'Rp 100 - 250 Juta', 'value': 'medium', 'min': 100000000, 'max': 250000000, 'icon': Icons.account_balance_wallet_rounded},
@@ -93,6 +93,19 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
     _animationController.forward();
   }
 
+  void _resetQuestionnaire() {
+    setState(() {
+      _currentQuestion = 0;
+      _answers.clear();
+      _recommendations.clear();
+      _isAnalyzing = false;
+      _showResults = false;
+    });
+    if (_pageController.hasClients) {
+      _pageController.jumpToPage(0);
+    }
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
@@ -103,13 +116,23 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.bg,
+      appBar: _isAnalyzing || _showResults ? null : AppBar(
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: const Text('AI Rekomendasi', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18, letterSpacing: -0.3)),
+      ),
       body: SafeArea(
         child: _isAnalyzing
             ? _buildAnalysisScreen()
-            : _showResults
-                ? AIRecommendationResults(answers: _answers, recommendations: _recommendations)
-                : _buildQuestionnaireScreen(),
+             : _showResults
+                 ? AIRecommendationResults(
+                     answers: _answers,
+                     recommendations: _recommendations,
+                     onBack: _resetQuestionnaire,
+                   )
+                 : _buildQuestionnaireScreen(),
       ),
     );
   }
@@ -119,7 +142,7 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
       children: [
         // Header dengan Progress
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           decoration: const BoxDecoration(
             color: AppColors.surface,
             border: Border(bottom: BorderSide(color: AppColors.border, width: 1)),
@@ -127,66 +150,39 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
           child: Column(
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.auto_awesome_rounded,
-                      color: AppColors.primary,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'AI Rekomendasi',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                        Text(
-                          'Temukan Franchise idealmu',
-                          style: TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
+                  const Text(
+                    'Temukan Franchise idealmu',
+                    style: TextStyle(
+                      color: AppColors.textSub,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
+                      horizontal: 14,
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primaryBg,
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.quiz_rounded,
-                          size: 14,
+                          size: 16,
                           color: AppColors.primary,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 6),
                         Text(
                           '${_currentQuestion + 1}/${_questions.length}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
                           ),
                         ),
                       ],
@@ -200,9 +196,9 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                 borderRadius: BorderRadius.circular(10),
                 child: LinearProgressIndicator(
                   value: (_currentQuestion + 1) / _questions.length,
-                  minHeight: 8,
+                  minHeight: 10,
                   backgroundColor: AppColors.surfaceDim,
-                  valueColor: AlwaysStoppedAnimation<Color>(
+                  valueColor: const AlwaysStoppedAnimation<Color>(
                     AppColors.primary,
                   ),
                 ),
@@ -241,7 +237,7 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
 
         // Bottom Navigation
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           decoration: const BoxDecoration(
             color: AppColors.surface,
             border: Border(top: BorderSide(color: AppColors.border, width: 1)),
@@ -253,26 +249,27 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                   child: OutlinedButton(
                     onPressed: _previousQuestion,
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.textSecondary,
+                      foregroundColor: AppColors.textSub,
                       side: BorderSide(
                         color: AppColors.textHint.withOpacity(0.5),
+                        width: 1.5,
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.arrow_back_rounded, size: 18),
-                        const SizedBox(width: 6),
-                        const Text('Sebelumnya'),
+                        Icon(Icons.arrow_back_rounded, size: 18),
+                        SizedBox(width: 8),
+                        Text('Kembali', style: TextStyle(fontWeight: FontWeight.w700)),
                       ],
                     ),
                   ),
                 ),
-              if (_currentQuestion > 0) const SizedBox(width: 12),
+              if (_currentQuestion > 0) const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton(
                   onPressed: _nextQuestion,
@@ -283,18 +280,19 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    elevation: 0,
+                    elevation: 4,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         _currentQuestion == _questions.length - 1
-                            ? 'Lihat Rekomendasi'
-                            : 'Selanjutnya',
+                            ? 'Lihat Hasil'
+                            : 'Lanjut',
+                        style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
                       if (_currentQuestion < _questions.length - 1) ...[
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 8),
                         const Icon(Icons.arrow_forward_rounded, size: 18),
                       ],
                     ],
@@ -314,7 +312,8 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
     final currentAnswer = _answers[questionKey];
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -322,7 +321,7 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primaryBg,
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -331,25 +330,26 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
               size: 32,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
 
           // Teks Pertanyaan
           Text(
             question['question'] as String,
             style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
               color: AppColors.textPrimary,
               letterSpacing: -0.5,
               height: 1.2,
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
+          const SizedBox(height: 10),
+          const Text(
             'Pilih salah satu opsi di bawah',
             style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
+              color: AppColors.textSub,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 32),
@@ -392,26 +392,32 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.only(bottom: 14),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: isSelected ? AppColors.primaryBg : AppColors.surface,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isSelected ? AppColors.primary : AppColors.border,
               width: isSelected ? 2 : 1,
             ),
-            boxShadow: isSelected ? null : AppColors.shadowSm,
+            boxShadow: isSelected ? [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.15),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              )
+            ] : AppColors.shadowSm,
           ),
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.primary
-                      : AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                      : AppColors.primaryBg,
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
                   icon,
@@ -425,14 +431,14 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                   label,
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                     color: AppColors.textPrimary,
                   ),
                 ),
               ),
               if (isSelected)
                 Container(
-                  padding: const EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(6),
                   decoration: const BoxDecoration(
                     color: AppColors.primary,
                     shape: BoxShape.circle,
@@ -460,6 +466,22 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
   }
 
   void _nextQuestion() {
+    final currentKey = _questions[_currentQuestion]['key'] as String;
+    if (_answers[currentKey] == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Silakan pilih salah satu opsi', style: TextStyle(fontWeight: FontWeight.w600)),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(20),
+        ),
+      );
+      return;
+    }
+
     if (_currentQuestion < _questions.length - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
@@ -471,21 +493,7 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
   }
 
   void _analyzeRecommendations() {
-    // Validasi semua pertanyaan telah dijawab
-    if (_answers.length < _questions.length) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Harap jawab semua pertanyaan terlebih dahulu'),
-          backgroundColor: AppColors.warning,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          margin: const EdgeInsets.all(20),
-        ),
-      );
-      return;
-    }
+    if (_answers.length < _questions.length) return;
 
     setState(() {
       _isAnalyzing = true;
@@ -494,9 +502,7 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
     // Simulasi analisis AI
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        // Generate rekomendasi berdasarkan jawaban
         _generateRecommendations();
-        
         setState(() {
           _isAnalyzing = false;
           _showResults = true;
@@ -593,15 +599,15 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                       width: 120,
                       height: 120,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColors.primary, AppColors.accent],
+                        gradient: const LinearGradient(
+                          colors: AppColors.grad,
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primary.withOpacity(0.3),
+                            color: AppColors.primary.withOpacity(0.4),
                             blurRadius: 30,
                             offset: const Offset(0, 10),
                           ),
@@ -610,7 +616,7 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                       child: const Center(
                         child: Icon(
                           Icons.auto_awesome_rounded,
-                          size: 60,
+                          size: 50,
                           color: Colors.white,
                         ),
                       ),
@@ -627,20 +633,21 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
             'AI Sedang Menganalisis',
             style: TextStyle(
               fontSize: 24,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
               color: AppColors.textPrimary,
               letterSpacing: -0.5,
             ),
           ),
           const SizedBox(height: 12),
-          Text(
+          const Text(
             'Menemukan Franchise terbaik untukmu...',
             style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 16,
+              color: AppColors.textSub,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 48),
 
           // Progress Indicator
           TweenAnimationBuilder(
@@ -649,7 +656,7 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
             builder: (context, double value, child) {
               return Column(
                 children: [
-                  Container(
+                  SizedBox(
                     width: 200,
                     height: 200,
                     child: Stack(
@@ -657,7 +664,7 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                         ShaderMask(
                           shaderCallback: (bounds) {
                             return SweepGradient(
-                              colors: [
+                              colors: const [
                                 AppColors.primary,
                                 AppColors.accent,
                                 AppColors.primary,
@@ -677,19 +684,20 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                         ),
                         Center(
                           child: Container(
-                            width: 160,
-                            height: 160,
-                            decoration: BoxDecoration(
-                              color: AppColors.surface,
+                            width: 170,
+                            height: 170,
+                            decoration: const BoxDecoration(
+                              color: AppColors.bg,
                               shape: BoxShape.circle,
                             ),
                             child: Center(
                               child: Text(
                                 '${(value * 100).toInt()}%',
                                 style: const TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.w700,
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.w800,
                                   color: AppColors.primary,
+                                  letterSpacing: -1,
                                 ),
                               ),
                             ),
@@ -711,11 +719,13 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
 class AIRecommendationResults extends StatefulWidget {
   final Map<String, String> answers;
   final List<FranchiseModel> recommendations;
+  final VoidCallback? onBack;
 
   const AIRecommendationResults({
     super.key,
     required this.answers,
     required this.recommendations,
+    this.onBack,
   });
 
   @override
@@ -754,45 +764,45 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
   String _getBudgetInsight(String? budget) {
     switch (budget) {
       case 'small':
-        return 'Dengan modal di bawah Rp 100 Juta, kami rekomendasikan Franchise skala kecil dengan potensi pertumbuhan cepat';
+        return 'Dengan modal di bawah Rp 100 Juta, kami merekomendasikan Franchise skala kecil dengan potensi pertumbuhan yang cepat.';
       case 'medium':
-        return 'Modal Rp 100-250 Juta cocok untuk Franchise menengah dengan keseimbangan risiko dan keuntungan';
+        return 'Modal Rp 100-250 Juta cocok untuk Franchise menengah dengan keseimbangan risiko dan keuntungan yang stabil.';
       case 'large':
-        return 'Investasi Rp 250-500 Juta membuka peluang Franchise premium dengan sistem yang lebih matang';
+        return 'Investasi Rp 250-500 Juta membuka peluang Franchise premium dengan sistem yang sudah sangat matang.';
       case 'xlarge':
-        return 'Modal besar memungkinkan Anda memilih Franchise internasional dengan ROI menjanjikan';
+        return 'Modal besar memungkinkan Anda memilih Franchise internasional dengan ROI yang menjanjikan.';
       default:
-        return 'Berdasarkan preferensi modal Anda, kami fokus pada Franchise yang sesuai';
+        return 'Berdasarkan preferensi modal Anda, kami fokus pada Franchise yang paling sesuai.';
     }
   }
   
   String _getIndustryInsight(String? industry) {
     switch (industry) {
       case 'F&B':
-        return 'Sektor kuliner memiliki potensi tinggi dengan permintaan pasar yang terus tumbuh';
+        return 'Sektor kuliner memiliki potensi tinggi dengan permintaan pasar yang terus bertumbuh pesat.';
       case 'Retail':
-        return 'Bisnis ritel menawarkan stabilitas dan potensi ekspansi ke berbagai lokasi';
+        return 'Bisnis ritel menawarkan stabilitas yang baik dan kemudahan dalam melakukan ekspansi.';
       case 'Education':
-        return 'Sektor pendidikan terus berkembang seiring meningkatnya kesadaran masyarakat';
+        return 'Sektor pendidikan terus berkembang seiring dengan meningkatnya kesadaran masyarakat.';
       case 'Health':
-        return 'Kesehatan & kecantikan adalah industri dengan pertumbuhan konsisten';
+        return 'Kesehatan & kecantikan adalah industri dengan pertumbuhan konsisten dan loyalitas tinggi.';
       case 'Services':
-        return 'Bisnis jasa memiliki fleksibilitas tinggi dan modal operasional lebih rendah';
+        return 'Bisnis jasa memiliki fleksibilitas tinggi dan beban modal operasional yang relatif lebih rendah.';
       default:
-        return 'Industri yang Anda pilih memiliki prospek cerah ke depannya';
+        return 'Industri yang Anda pilih memiliki prospek yang cerah ke depannya.';
     }
   }
   
   String _getExperienceInsight(String? experience) {
     switch (experience) {
       case 'beginner':
-        return 'Sebagai pemula, kami pilihkan Franchise dengan sistem lengkap dan dukungan intensif';
+        return 'Sebagai pemula, kami pilihkan Franchise dengan sistem lengkap dan dukungan intensif.';
       case 'intermediate':
-        return 'Pengalaman menengah Anda cocok untuk Franchise dengan tantangan terkontrol';
+        return 'Pengalaman menengah Anda cocok untuk Franchise dengan tantangan yang terkontrol.';
       case 'advanced':
-        return 'Keahlian Anda memungkinkan untuk mengelola Franchise kompleks dengan ROI tinggi';
+        return 'Keahlian Anda memungkinkan untuk mengelola Franchise kompleks dengan ROI tinggi.';
       default:
-        return 'Rekomendasi ini disesuaikan dengan tingkat pengalaman Anda';
+        return 'Rekomendasi ini disesuaikan dengan tingkat pengalaman Anda.';
     }
   }
 
@@ -805,31 +815,33 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.bg,
       body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
         slivers: [
           // App Bar Khusus
           SliverAppBar(
             pinned: true,
             backgroundColor: AppColors.surface,
             elevation: 0,
+            scrolledUnderElevation: 1,
             title: const Text(
               'Rekomendasi AI',
               style: TextStyle(
                 color: AppColors.textPrimary,
-                fontWeight: FontWeight.w600,
-                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                fontSize: 18,
+                letterSpacing: -0.3,
               ),
             ),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
               onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AIRecommendationScreen(),
-                  ),
-                );
+                if (widget.onBack != null) {
+                  widget.onBack!();
+                } else {
+                  Navigator.maybePop(context);
+                }
               },
             ),
           ),
@@ -851,11 +863,21 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(28),
                     decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: AppColors.shadowPrimary,
+                      gradient: const LinearGradient(
+                        colors: AppColors.grad,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withOpacity(0.4),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -863,10 +885,10 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(10),
+                              padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(14),
                               ),
                               child: const Icon(
                                 Icons.auto_awesome_rounded,
@@ -874,24 +896,26 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                                 size: 28,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            const SizedBox(width: 16),
                             const Expanded(
                               child: Text(
                                 'Analisis AI untukmu',
                                 style: TextStyle(
                                   color: Colors.white70,
                                   fontSize: 14,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 24),
                         const Text(
                           'Tingkat Kecocokan',
                           style: TextStyle(
                             color: Colors.white70,
                             fontSize: 14,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -902,18 +926,19 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                               '92%',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 48,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: -1,
+                                fontSize: 56,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: -2,
+                                height: 1,
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 12),
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
+                              padding: const EdgeInsets.only(bottom: 6),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 4,
+                                  horizontal: 12,
+                                  vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withOpacity(0.2),
@@ -926,13 +951,13 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                                       color: Colors.white,
                                       size: 14,
                                     ),
-                                    SizedBox(width: 4),
+                                    SizedBox(width: 6),
                                     Text(
                                       'Sangat Cocok',
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
                                   ],
@@ -945,7 +970,7 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
 
                 // AI Insights
                 const Text(
@@ -954,7 +979,7 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textPrimary,
-                    letterSpacing: -0.5,
+                    letterSpacing: -0.3,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -971,34 +996,40 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                     },
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: AppColors.border, width: 1),
                         boxShadow: AppColors.shadowSm,
                       ),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withOpacity(0.1),
+                              color: AppColors.primaryBg,
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(
+                            child: const Icon(
                               Icons.lightbulb_rounded,
                               color: AppColors.primary,
-                              size: 18,
+                              size: 20,
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 16),
                           Expanded(
-                            child: Text(
-                              _insights[index],
-                              style: const TextStyle(
-                                color: AppColors.textPrimary,
-                                fontSize: 13,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Text(
+                                _insights[index],
+                                style: const TextStyle(
+                                  color: AppColors.textPrimary,
+                                  fontSize: 14,
+                                  height: 1.4,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                           ),
@@ -1007,7 +1038,7 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                     ),
                   );
                 }),
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
 
                 // Top Recommendations
                 const Text(
@@ -1016,7 +1047,7 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textPrimary,
-                    letterSpacing: -0.5,
+                    letterSpacing: -0.3,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -1062,8 +1093,8 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.goldBg,
-                                  borderRadius: BorderRadius.circular(6),
+                                  color: AppColors.gold.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(8),
                                   border: Border.all(color: AppColors.gold.withOpacity(0.3)),
                                 ),
                                 child: const Row(
@@ -1073,13 +1104,13 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                                       color: AppColors.gold,
                                       size: 14,
                                     ),
-                                    SizedBox(width: 4),
+                                    SizedBox(width: 6),
                                     Text(
                                       'Pilihan Terbaik',
                                       style: TextStyle(
                                         color: AppColors.gold,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w600,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
                                   ],
@@ -1095,7 +1126,7 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
               ),
             ),
           ),
-          const SliverPadding(padding: EdgeInsets.only(bottom: 20)),
+          const SliverPadding(padding: EdgeInsets.only(bottom: 40)),
         ],
       ),
     );

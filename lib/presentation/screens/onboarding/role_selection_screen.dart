@@ -63,7 +63,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.bg,
       body: SafeArea(
         child: FadeTransition(
           opacity: _fadeAnim,
@@ -110,7 +110,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                     title: 'Saya Pemilik UMKM (Franchisor)',
                     description:
                         'Saya memiliki bisnis dan ingin mendaftarkan franchise serta mengakses pendanaan untuk ekspansi.',
-                    accentColor: const Color(0xFF7C3AED),
+                    accentColor: AppColors.primaryDark,
                     features: const [
                       'Daftarkan franchise ke marketplace',
                       'Akses pendanaan ekspansi',
