@@ -323,7 +323,7 @@ class _FranchisorDashboardScreenState extends State<FranchisorDashboardScreen> w
                       LineChartData(
                         gridData: const FlGridData(show: false),
                         titlesData: FlTitlesData(
-                          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (v, m) => SideTitleWidget(
+                          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 32, getTitlesWidget: (v, m) => SideTitleWidget(
                             meta: m,
                             space: 8.0,
                             child: Text('B${v.toInt()}', style: const TextStyle(fontSize: 11, color: AppColors.textSub, fontWeight: FontWeight.w500)),

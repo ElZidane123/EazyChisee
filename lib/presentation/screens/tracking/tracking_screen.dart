@@ -373,6 +373,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
+                      reservedSize: 32,
                       getTitlesWidget: (value, meta) {
                         const titles = ['Jan', 'Feb', 'Mar'];
                         final idx = value.toInt().clamp(0, titles.length - 1);

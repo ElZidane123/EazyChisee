@@ -488,6 +488,7 @@ class _FranchiseSimulatorScreenState extends State<FranchiseSimulatorScreen> {
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
+                      reservedSize: 32,
                       getTitlesWidget: (v, meta) {
                         return SideTitleWidget(
                           meta: meta,

@@ -563,6 +563,7 @@ class _BEPSimulationScreenState extends State<BEPSimulationScreen>
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
+                        reservedSize: 32,
                         getTitlesWidget: (value, meta) {
                           return SideTitleWidget(
                             meta: meta,

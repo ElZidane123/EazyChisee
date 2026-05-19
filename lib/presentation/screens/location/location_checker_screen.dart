@@ -268,6 +268,7 @@ class _LocationCheckerScreenState extends State<LocationCheckerScreen> {
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
+                    reservedSize: 32,
                     getTitlesWidget: (v, meta) => SideTitleWidget(
                       meta: meta,
                       space: 8.0,
