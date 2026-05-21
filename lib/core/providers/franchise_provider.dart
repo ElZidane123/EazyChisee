@@ -9,11 +9,12 @@ class FranchiseProvider extends ChangeNotifier {
 
   FranchiseProvider() {
     _franchises = FranchiseModel.dummyData();
+    _selectedCategory = ''; // Set default ke empty string (show all)
   }
 
   List<FranchiseModel> get franchises {
     var filtered = _franchises.where((franchise) {
-      final matchesCategory = _selectedCategory == 'All' || 
+      final matchesCategory = _selectedCategory.isEmpty || 
           franchise.category == _selectedCategory;
       final matchesSearch = franchise.name.toLowerCase().contains(
           _searchQuery.toLowerCase()) || 
@@ -44,7 +45,7 @@ class FranchiseProvider extends ChangeNotifier {
 
 void clearFilters() {
   _searchQuery = '';
-  _selectedCategory = 'All';
+  _selectedCategory = '';
   notifyListeners();
 }
 

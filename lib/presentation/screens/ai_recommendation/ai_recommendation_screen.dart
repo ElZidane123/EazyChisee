@@ -5,6 +5,14 @@ import 'package:eazychise/core/models/franchise_model.dart';
 import 'package:eazychise/core/providers/franchise_provider.dart';
 import 'package:eazychise/presentation/widgets/franchise_card.dart';
 
+// ============================================================
+// MODERN ORANGE COLOR PALETTE (No gradients)
+// ============================================================
+const Color _orangePrimary = Color(0xFFF85C2E);
+const Color _orangeLight = Color(0xFFFFF0EA);
+const Color _orangeBg = Color(0xFFFFF6F2);
+const Color _orangeDark = Color(0xFFE04A1F);
+
 class AIRecommendationScreen extends StatefulWidget {
   const AIRecommendationScreen({super.key});
 
@@ -19,21 +27,20 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  
-  // Data jawaban pengguna
+
   final Map<String, String> _answers = {};
   List<FranchiseModel> _recommendations = [];
-  
+
   final List<Map<String, dynamic>> _questions = [
     {
       'question': 'Berapa kisaran modal yang Anda siapkan?',
       'key': 'budget',
       'icon': Icons.account_balance_wallet_rounded,
       'options': [
-        {'label': '< Rp 100 Juta', 'value': 'small', 'min': 0, 'max': 100000000, 'icon': Icons.savings_rounded},
-        {'label': 'Rp 100 - 250 Juta', 'value': 'medium', 'min': 100000000, 'max': 250000000, 'icon': Icons.account_balance_wallet_rounded},
-        {'label': 'Rp 250 - 500 Juta', 'value': 'large', 'min': 250000000, 'max': 500000000, 'icon': Icons.account_balance_rounded},
-        {'label': '> Rp 500 Juta', 'value': 'xlarge', 'min': 500000000, 'max': 999999999, 'icon': Icons.workspace_premium_rounded},
+        {'label': '< Rp 100 Juta', 'value': 'small', 'icon': Icons.savings_rounded},
+        {'label': 'Rp 100 - 250 Juta', 'value': 'medium', 'icon': Icons.account_balance_wallet_rounded},
+        {'label': 'Rp 250 - 500 Juta', 'value': 'large', 'icon': Icons.account_balance_rounded},
+        {'label': '> Rp 500 Juta', 'value': 'xlarge', 'icon': Icons.workspace_premium_rounded},
       ],
     },
     {
@@ -69,7 +76,7 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
       ],
     },
   ];
-  
+
   int _currentQuestion = 0;
   final PageController _pageController = PageController();
 
@@ -78,18 +85,15 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 600),
     );
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
     );
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
+      begin: const Offset(0, 0.2),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic));
     _animationController.forward();
   }
 
@@ -117,22 +121,32 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bg,
-      appBar: _isAnalyzing || _showResults ? null : AppBar(
-        backgroundColor: AppColors.surface,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: const Text('AI Rekomendasi', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18, letterSpacing: -0.3)),
-      ),
+      appBar: _isAnalyzing || _showResults
+          ? null
+          : AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              title: const Text(
+                'AI Rekomendasi',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                  letterSpacing: -0.3,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
       body: SafeArea(
         child: _isAnalyzing
             ? _buildAnalysisScreen()
-             : _showResults
-                 ? AIRecommendationResults(
-                     answers: _answers,
-                     recommendations: _recommendations,
-                     onBack: _resetQuestionnaire,
-                   )
-                 : _buildQuestionnaireScreen(),
+            : _showResults
+                ? AIRecommendationResults(
+                    answers: _answers,
+                    recommendations: _recommendations,
+                    onBack: _resetQuestionnaire,
+                  )
+                : _buildQuestionnaireScreen(),
       ),
     );
   }
@@ -140,13 +154,10 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
   Widget _buildQuestionnaireScreen() {
     return Column(
       children: [
-        // Header dengan Progress
+        // Header with progress
         Container(
-          padding: const EdgeInsets.all(20),
-          decoration: const BoxDecoration(
-            color: AppColors.surface,
-            border: Border(bottom: BorderSide(color: AppColors.border, width: 1)),
-          ),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+          color: Colors.white,
           child: Column(
             children: [
               Row(
@@ -161,26 +172,19 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 6,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryBg,
+                      color: _orangeLight,
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.quiz_rounded,
-                          size: 16,
-                          color: AppColors.primary,
-                        ),
+                        const Icon(Icons.quiz_rounded, size: 16, color: _orangePrimary),
                         const SizedBox(width: 6),
                         Text(
                           '${_currentQuestion + 1}/${_questions.length}',
                           style: const TextStyle(
-                            color: AppColors.primary,
+                            color: _orangePrimary,
                             fontWeight: FontWeight.w700,
                             fontSize: 13,
                           ),
@@ -191,55 +195,43 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                 ],
               ),
               const SizedBox(height: 16),
-              // Progress Bar
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: LinearProgressIndicator(
                   value: (_currentQuestion + 1) / _questions.length,
-                  minHeight: 10,
+                  minHeight: 6,
                   backgroundColor: AppColors.surfaceDim,
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    AppColors.primary,
-                  ),
+                  valueColor: const AlwaysStoppedAnimation<Color>(_orangePrimary),
                 ),
               ),
             ],
           ),
         ),
 
-        // Konten Utama
+        // Main content
         Expanded(
           child: PageView.builder(
             controller: _pageController,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _questions.length,
-            onPageChanged: (index) {
-              setState(() {
-                _currentQuestion = index;
-              });
-            },
+            onPageChanged: (index) => setState(() => _currentQuestion = index),
             itemBuilder: (context, index) {
-              return TweenAnimationBuilder(
-                duration: const Duration(milliseconds: 500),
-                tween: Tween<double>(begin: 0, end: 1),
-                curve: Curves.easeOutCubic,
-                builder: (context, double value, child) {
-                  return Transform.translate(
-                    offset: Offset(0, 30 * (1 - value)),
-                    child: Opacity(opacity: value, child: child),
-                  );
-                },
-                child: _buildQuestionPage(index),
+              return FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: _buildQuestionPage(index),
+                ),
               );
             },
           ),
         ),
 
-        // Bottom Navigation
+        // Bottom navigation
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
           decoration: const BoxDecoration(
-            color: AppColors.surface,
+            color: Colors.white,
             border: Border(top: BorderSide(color: AppColors.border, width: 1)),
           ),
           child: Row(
@@ -250,21 +242,16 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                     onPressed: _previousQuestion,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.textSub,
-                      side: BorderSide(
-                        color: AppColors.textHint.withOpacity(0.5),
-                        width: 1.5,
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                      side: const BorderSide(color: AppColors.border, width: 1),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.arrow_back_rounded, size: 18),
                         SizedBox(width: 8),
-                        Text('Kembali', style: TextStyle(fontWeight: FontWeight.w700)),
+                        Text('Kembali', style: TextStyle(fontWeight: FontWeight.w600)),
                       ],
                     ),
                   ),
@@ -274,21 +261,17 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
                 child: ElevatedButton(
                   onPressed: _nextQuestion,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: _orangePrimary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 4,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 0,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        _currentQuestion == _questions.length - 1
-                            ? 'Lihat Hasil'
-                            : 'Lanjut',
+                        _currentQuestion == _questions.length - 1 ? 'Lihat Hasil' : 'Lanjut',
                         style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
                       if (_currentQuestion < _questions.length - 1) ...[
@@ -317,33 +300,29 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Ikon Pertanyaan
+          // Icon
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.primaryBg,
+              color: _orangeLight,
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              question['icon'] as IconData,
-              color: AppColors.primary,
-              size: 32,
-            ),
+            child: Icon(question['icon'] as IconData, color: _orangePrimary, size: 32),
           ),
           const SizedBox(height: 24),
 
-          // Teks Pertanyaan
+          // Question text
           Text(
             question['question'] as String,
             style: const TextStyle(
-              fontSize: 26,
+              fontSize: 24,
               fontWeight: FontWeight.w800,
               color: AppColors.textPrimary,
               letterSpacing: -0.5,
               height: 1.2,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           const Text(
             'Pilih salah satu opsi di bawah',
             style: TextStyle(
@@ -354,18 +333,14 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
           ),
           const SizedBox(height: 32),
 
-          // Opsi Jawaban
+          // Options
           ...(question['options'] as List).map((option) {
             final isSelected = currentAnswer == option['value'];
             return _buildOptionCard(
               label: option['label'],
               icon: option['icon'],
               isSelected: isSelected,
-              onTap: () {
-                setState(() {
-                  _answers[questionKey] = option['value'];
-                });
-              },
+              onTap: () => setState(() => _answers[questionKey] = option['value']),
             );
           }),
         ],
@@ -379,78 +354,51 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    return TweenAnimationBuilder(
-      duration: const Duration(milliseconds: 200),
-      tween: Tween<double>(begin: 1, end: isSelected ? 1.02 : 1),
-      curve: Curves.easeOutCubic,
-      builder: (context, double scale, child) {
-        return Transform.scale(
-          scale: scale,
-          child: child,
-        );
-      },
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 14),
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.primaryBg : AppColors.surface,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.border,
-              width: isSelected ? 2 : 1,
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.only(bottom: 14),
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: isSelected ? _orangeLight : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? _orangePrimary : AppColors.border,
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: isSelected
+              ? [BoxShadow(color: _orangePrimary.withOpacity(0.15), blurRadius: 12, offset: const Offset(0, 4))]
+              : [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 8, offset: const Offset(0, 2))],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isSelected ? _orangePrimary : _orangeLight,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(icon, color: isSelected ? Colors.white : _orangePrimary, size: 22),
             ),
-            boxShadow: isSelected ? [
-              BoxShadow(
-                color: AppColors.primary.withOpacity(0.15),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              )
-            ] : AppColors.shadowSm,
-          ),
-          child: Row(
-            children: [
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            if (isSelected)
               Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.primary
-                      : AppColors.primaryBg,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(
-                  icon,
-                  color: isSelected ? Colors.white : AppColors.primary,
-                  size: 24,
-                ),
+                padding: const EdgeInsets.all(6),
+                decoration: const BoxDecoration(color: _orangePrimary, shape: BoxShape.circle),
+                child: const Icon(Icons.check_rounded, color: Colors.white, size: 16),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
-              if (isSelected)
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check_rounded,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                ),
-            ],
-          ),
+          ],
         ),
       ),
     );
@@ -473,9 +421,7 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
           content: const Text('Silakan pilih salah satu opsi', style: TextStyle(fontWeight: FontWeight.w600)),
           backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           margin: const EdgeInsets.all(20),
         ),
       );
@@ -495,12 +441,8 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
   void _analyzeRecommendations() {
     if (_answers.length < _questions.length) return;
 
-    setState(() {
-      _isAnalyzing = true;
-    });
-
-    // Simulasi analisis AI
-    Future.delayed(const Duration(seconds: 3), () {
+    setState(() => _isAnalyzing = true);
+    Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         _generateRecommendations();
         setState(() {
@@ -514,57 +456,48 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
   void _generateRecommendations() {
     final franchiseProvider = Provider.of<FranchiseProvider>(context, listen: false);
     final allFranchises = franchiseProvider.franchises;
-    
-    // Skor untuk setiap franchise
     Map<FranchiseModel, int> scores = {};
-    
+
     for (var franchise in allFranchises) {
       int score = 0;
-      
-      // 1. Filter berdasarkan budget
+
+      // Budget
       final budget = _answers['budget'];
       if (budget == 'small' && franchise.investmentMin <= 100000000) score += 30;
       else if (budget == 'medium' && franchise.investmentMin >= 100000000 && franchise.investmentMin <= 250000000) score += 30;
       else if (budget == 'large' && franchise.investmentMin >= 250000000 && franchise.investmentMin <= 500000000) score += 30;
       else if (budget == 'xlarge' && franchise.investmentMin >= 500000000) score += 30;
-      else score += 5; // Tetap beri skor kecil jika tidak sesuai budget
-      
-      // 2. Filter berdasarkan industri
+      else score += 5;
+
+      // Industry
       final industry = _answers['industry'];
-      if (franchise.category.contains(industry ?? '')) {
-        score += 25;
-      } else if (industry == 'F&B' && (franchise.category.contains('Food') || franchise.category.contains('Beverage'))) {
-        score += 20;
-      } else {
-        score += 5;
-      }
-      
-      // 3. Filter berdasarkan pengalaman
+      if (franchise.category.contains(industry ?? '')) score += 25;
+      else if (industry == 'F&B' && (franchise.category.contains('Food') || franchise.category.contains('Beverage'))) score += 20;
+      else score += 5;
+
+      // Experience
       final experience = _answers['experience'];
-      if (experience == 'beginner' && franchise.roi < 20) score += 15; // ROI rendah cocok untuk pemula
+      if (experience == 'beginner' && franchise.roi < 20) score += 15;
       else if (experience == 'intermediate' && franchise.roi >= 20 && franchise.roi < 30) score += 15;
       else if (experience == 'advanced' && franchise.roi >= 30) score += 15;
       else score += 5;
-      
-      // 4. Filter berdasarkan keterlibatan
+
+      // Involvement
       final involvement = _answers['involvement'];
-      if (involvement == 'passive' && franchise.roi > 15) score += 15; // Investor suka ROI tinggi
-      else if (involvement == 'active' && franchise.paybackPeriod < 24) score += 15; // Operator suka payback cepat
+      if (involvement == 'passive' && franchise.roi > 15) score += 15;
+      else if (involvement == 'active' && franchise.paybackPeriod < 24) score += 15;
       else if (involvement == 'semi' && franchise.paybackPeriod >= 24 && franchise.paybackPeriod <= 36) score += 15;
       else score += 5;
-      
-      // 5. Bonus untuk rating tinggi
+
+      // Rating bonus
       if (franchise.rating >= 4.5) score += 15;
       else if (franchise.rating >= 4.0) score += 10;
-      
+
       scores[franchise] = score;
     }
-    
-    // Urutkan berdasarkan skor tertinggi
+
     var sortedEntries = scores.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
-    
-    // Ambil 5 rekomendasi teratas
     _recommendations = sortedEntries.take(5).map((e) => e.key).toList();
   }
 
@@ -573,52 +506,34 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Animasi AI
+          // Animated AI icon
           TweenAnimationBuilder(
             duration: const Duration(milliseconds: 1500),
             tween: Tween<double>(begin: 0, end: 1),
             curve: Curves.easeInOutCubic,
             builder: (context, double value, child) {
               return Transform.scale(
-                scale: 0.8 + (0.2 * value),
+                scale: 0.9 + (0.1 * value),
                 child: Container(
-                  width: 160,
-                  height: 160,
+                  width: 140,
+                  height: 140,
                   decoration: BoxDecoration(
-                    gradient: RadialGradient(
-                      colors: [
-                        AppColors.primary.withOpacity(0.2),
-                        AppColors.accent.withOpacity(0.1),
-                        Colors.transparent,
-                      ],
-                    ),
+                    color: _orangeLight,
                     shape: BoxShape.circle,
                   ),
                   child: Center(
                     child: Container(
-                      width: 120,
-                      height: 120,
+                      width: 100,
+                      height: 100,
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: AppColors.grad,
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: _orangePrimary,
                         shape: BoxShape.circle,
                         boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withOpacity(0.4),
-                            blurRadius: 30,
-                            offset: const Offset(0, 10),
-                          ),
+                          BoxShadow(color: _orangePrimary.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 8)),
                         ],
                       ),
                       child: const Center(
-                        child: Icon(
-                          Icons.auto_awesome_rounded,
-                          size: 50,
-                          color: Colors.white,
-                        ),
+                        child: Icon(Icons.auto_awesome_rounded, size: 48, color: Colors.white),
                       ),
                     ),
                   ),
@@ -628,11 +543,10 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
           ),
           const SizedBox(height: 32),
 
-          // Teks Analisis
           const Text(
             'AI Sedang Menganalisis',
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 22,
               fontWeight: FontWeight.w800,
               color: AppColors.textPrimary,
               letterSpacing: -0.5,
@@ -641,72 +555,41 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
           const SizedBox(height: 12),
           const Text(
             'Menemukan Franchise terbaik untukmu...',
-            style: TextStyle(
-              color: AppColors.textSub,
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(color: AppColors.textSub, fontSize: 15, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 48),
 
-          // Progress Indicator
+          // Circular progress
           TweenAnimationBuilder(
-            duration: const Duration(milliseconds: 3000),
+            duration: const Duration(seconds: 2),
             tween: Tween<double>(begin: 0, end: 1),
             builder: (context, double value, child) {
-              return Column(
-                children: [
-                  SizedBox(
-                    width: 200,
-                    height: 200,
-                    child: Stack(
-                      children: [
-                        ShaderMask(
-                          shaderCallback: (bounds) {
-                            return SweepGradient(
-                              colors: const [
-                                AppColors.primary,
-                                AppColors.accent,
-                                AppColors.primary,
-                              ],
-                              stops: const [0.0, 0.5, 1.0],
-                              transform: GradientRotation(value * 2 * 3.14),
-                            ).createShader(bounds);
-                          },
-                          child: Container(
-                            width: 200,
-                            height: 200,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        Center(
-                          child: Container(
-                            width: 170,
-                            height: 170,
-                            decoration: const BoxDecoration(
-                              color: AppColors.bg,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                '${(value * 100).toInt()}%',
-                                style: const TextStyle(
-                                  fontSize: 36,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColors.primary,
-                                  letterSpacing: -1,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+              return SizedBox(
+                width: 100,
+                height: 100,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 90,
+                      height: 90,
+                      child: CircularProgressIndicator(
+                        value: value,
+                        strokeWidth: 6,
+                        color: _orangePrimary,
+                        backgroundColor: _orangeLight,
+                      ),
                     ),
-                  ),
-                ],
+                    Text(
+                      '${(value * 100).toInt()}%',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: _orangePrimary,
+                      ),
+                    ),
+                  ],
+                ),
               );
             },
           ),
@@ -716,6 +599,9 @@ class _AIRecommendationScreenState extends State<AIRecommendationScreen>
   }
 }
 
+// ============================================================
+// AI RECOMMENDATION RESULTS
+// ============================================================
 class AIRecommendationResults extends StatefulWidget {
   final Map<String, String> answers;
   final List<FranchiseModel> recommendations;
@@ -735,17 +621,12 @@ class AIRecommendationResults extends StatefulWidget {
 class _AIRecommendationResultsState extends State<AIRecommendationResults>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  
   late List<String> _insights;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    )..forward();
-    
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 800))..forward();
     _generateInsights();
   }
 
@@ -753,14 +634,14 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
     final budget = widget.answers['budget'];
     final industry = widget.answers['industry'];
     final experience = widget.answers['experience'];
-    
+
     _insights = [
       _getBudgetInsight(budget),
       _getIndustryInsight(industry),
       _getExperienceInsight(experience),
     ];
   }
-  
+
   String _getBudgetInsight(String? budget) {
     switch (budget) {
       case 'small':
@@ -775,7 +656,7 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
         return 'Berdasarkan preferensi modal Anda, kami fokus pada Franchise yang paling sesuai.';
     }
   }
-  
+
   String _getIndustryInsight(String? industry) {
     switch (industry) {
       case 'F&B':
@@ -792,7 +673,7 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
         return 'Industri yang Anda pilih memiliki prospek yang cerah ke depannya.';
     }
   }
-  
+
   String _getExperienceInsight(String? experience) {
     switch (experience) {
       case 'beginner':
@@ -819,10 +700,10 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          // App Bar Khusus
+          // App Bar
           SliverAppBar(
             pinned: true,
-            backgroundColor: AppColors.surface,
+            backgroundColor: Colors.white,
             elevation: 0,
             scrolledUnderElevation: 1,
             title: const Text(
@@ -836,47 +717,25 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
             ),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
-              onPressed: () {
-                if (widget.onBack != null) {
-                  widget.onBack!();
-                } else {
-                  Navigator.maybePop(context);
-                }
-              },
+              onPressed: () => widget.onBack?.call(),
             ),
           ),
 
-          // Konten Utama
+          // Main content
           SliverPadding(
             padding: const EdgeInsets.all(20),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                // AI Summary Card
-                TweenAnimationBuilder(
-                  duration: const Duration(milliseconds: 600),
-                  tween: Tween<double>(begin: 0, end: 1),
-                  curve: Curves.easeOutCubic,
-                  builder: (context, double value, child) {
-                    return Transform.translate(
-                      offset: Offset(0, 30 * (1 - value)),
-                      child: Opacity(opacity: value, child: child),
-                    );
-                  },
+                // Score card
+                FadeTransition(
+                  opacity: _animationController,
                   child: Container(
-                    padding: const EdgeInsets.all(28),
+                    padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: AppColors.grad,
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(24),
+                      color: _orangePrimary,
+                      borderRadius: BorderRadius.circular(28),
                       boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withOpacity(0.4),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
+                        BoxShadow(color: _orangePrimary.withOpacity(0.25), blurRadius: 20, offset: const Offset(0, 8)),
                       ],
                     ),
                     child: Column(
@@ -885,40 +744,25 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(12),
+                              padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(14),
                               ),
-                              child: const Icon(
-                                Icons.auto_awesome_rounded,
-                                color: Colors.white,
-                                size: 28,
-                              ),
+                              child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 24),
                             ),
-                            const SizedBox(width: 16),
+                            const SizedBox(width: 12),
                             const Expanded(
                               child: Text(
                                 'Analisis AI untukmu',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w600),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 24),
-                        const Text(
-                          'Tingkat Kecocokan',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
+                        const Text('Tingkat Kecocokan', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                        const SizedBox(height: 6),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
@@ -926,7 +770,7 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                               '92%',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 56,
+                                fontSize: 48,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: -2,
                                 height: 1,
@@ -936,30 +780,16 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                             Padding(
                               padding: const EdgeInsets.only(bottom: 6),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: const Row(
                                   children: [
-                                    Icon(
-                                      Icons.star_rounded,
-                                      color: Colors.white,
-                                      size: 14,
-                                    ),
+                                    Icon(Icons.star_rounded, color: Colors.white, size: 14),
                                     SizedBox(width: 6),
-                                    Text(
-                                      'Sangat Cocok',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
+                                    Text('Sangat Cocok', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
                                   ],
                                 ),
                               ),
@@ -970,67 +800,39 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 28),
 
-                // AI Insights
+                // Insights
                 const Text(
                   'Mengapa rekomendasi ini?',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                    letterSpacing: -0.3,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary, letterSpacing: -0.3),
                 ),
                 const SizedBox(height: 16),
                 ...List.generate(_insights.length, (index) {
-                  return TweenAnimationBuilder(
-                    duration: Duration(milliseconds: 500 + (index * 100)),
-                    tween: Tween<double>(begin: 0, end: 1),
-                    curve: Curves.easeOutCubic,
-                    builder: (context, double value, child) {
-                      return Transform.translate(
-                        offset: Offset(20 * (1 - value), 0),
-                        child: Opacity(opacity: value, child: child),
-                      );
-                    },
+                  return FadeTransition(
+                    opacity: CurvedAnimation(parent: _animationController, curve: Interval(0.2 + index * 0.1, 1.0)),
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppColors.border, width: 1),
-                        boxShadow: AppColors.shadowSm,
+                        border: Border.all(color: AppColors.border.withOpacity(0.3)),
+                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 8, offset: const Offset(0, 2))],
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryBg,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.lightbulb_rounded,
-                              color: AppColors.primary,
-                              size: 20,
-                            ),
+                            decoration: BoxDecoration(color: _orangeLight, shape: BoxShape.circle),
+                            child: const Icon(Icons.lightbulb_rounded, color: _orangePrimary, size: 18),
                           ),
-                          const SizedBox(width: 16),
+                          const SizedBox(width: 14),
                           Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Text(
-                                _insights[index],
-                                style: const TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontSize: 14,
-                                  height: 1.4,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
+                            child: Text(
+                              _insights[index],
+                              style: const TextStyle(color: AppColors.textPrimary, fontSize: 14, height: 1.4, fontWeight: FontWeight.w500),
                             ),
                           ),
                         ],
@@ -1038,81 +840,53 @@ class _AIRecommendationResultsState extends State<AIRecommendationResults>
                     ),
                   );
                 }),
-                const SizedBox(height: 32),
+                const SizedBox(height: 28),
 
-                // Top Recommendations
                 const Text(
                   'Rekomendasi Terbaik',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                    letterSpacing: -0.3,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary, letterSpacing: -0.3),
                 ),
                 const SizedBox(height: 16),
               ]),
             ),
           ),
 
-          // Daftar Rekomendasi
+          // Recommendations list
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   if (index >= widget.recommendations.length) return null;
-                  
-                  return TweenAnimationBuilder(
-                    duration: Duration(milliseconds: 600 + (index * 100)),
-                    tween: Tween<double>(begin: 0, end: 1),
-                    curve: Curves.easeOutCubic,
-                    builder: (context, double value, child) {
-                      return Transform.translate(
-                        offset: Offset(0, 30 * (1 - value)),
-                        child: Opacity(opacity: value, child: child),
-                      );
-                    },
+                  return FadeTransition(
+                    opacity: CurvedAnimation(
+                      parent: _animationController,
+                      curve: Interval(0.4 + index * 0.1, 1.0),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: Stack(
                         children: [
                           FranchiseCard(
                             franchise: widget.recommendations[index],
-                            onTap: () {
-                              // Navigate to detail
-                            },
+                            onTap: () {},
                           ),
                           if (index == 0)
                             Positioned(
                               top: 12,
                               left: 12,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                 decoration: BoxDecoration(
-                                  color: AppColors.gold.withOpacity(0.15),
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: AppColors.gold.withOpacity(0.3)),
+                                  color: _orangeLight,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: _orangePrimary.withOpacity(0.2)),
                                 ),
                                 child: const Row(
                                   children: [
-                                    Icon(
-                                      Icons.emoji_events_rounded,
-                                      color: AppColors.gold,
-                                      size: 14,
-                                    ),
-                                    SizedBox(width: 6),
-                                    Text(
-                                      'Pilihan Terbaik',
-                                      style: TextStyle(
-                                        color: AppColors.gold,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
+                                    Icon(Icons.emoji_events_rounded, color: _orangePrimary, size: 14),
+                                    SizedBox(width: 4),
+                                    Text('Pilihan Terbaik', style: TextStyle(color: _orangePrimary, fontSize: 11, fontWeight: FontWeight.w700)),
                                   ],
                                 ),
                               ),
