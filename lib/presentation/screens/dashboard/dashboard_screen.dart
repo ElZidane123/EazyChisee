@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:eazychise/core/constants/app_colors.dart';
 import 'package:eazychise/core/providers/auth_provider.dart';
@@ -13,6 +14,15 @@ import 'package:eazychise/presentation/screens/profile/profile_screen.dart';
 import 'package:eazychise/presentation/screens/academy/academy_screen.dart';
 import 'package:eazychise/presentation/screens/trust_score_screen.dart';
 import 'package:eazychise/core/providers/notification_provider.dart';
+
+// ============================================================
+// MODERN ORANGE COLOR PALETTE (No gradients)
+// ============================================================
+const Color _orangePrimary = Color(0xFFF85C2E);
+const Color _orangeLight = Color(0xFFFFF0EA);
+const Color _orangeDark = Color(0xFFE04A1F);
+const Color _orangeBg = Color(0xFFFFF6F2);
+const Color _orangeSoft = Color(0xFFFFA07A);
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -49,10 +59,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildBottomNav() {
     return Container(
-      height: 72,
-      decoration: const BoxDecoration(
+      height: 76,
+      decoration: BoxDecoration(
         color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.border, width: 1)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 16, offset: const Offset(0, -4)),
+        ],
       ),
       child: SafeArea(
         top: false,
@@ -62,36 +75,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
             final selected = i == _selectedIndex;
             return Expanded(
               child: GestureDetector(
-                onTap: () => setState(() => _selectedIndex = i),
+                onTap: () {
+                  setState(() => _selectedIndex = i);
+                },
                 behavior: HitTestBehavior.opaque,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      AnimatedContainer(
+                      AnimatedScale(
+                        scale: selected ? 1.1 : 1.0,
                         duration: const Duration(milliseconds: 200),
-                        width: selected ? 40 : 0,
-                        height: selected ? 4 : 0,
-                        margin: EdgeInsets.only(bottom: selected ? 4 : 0),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(2),
+                        child: Icon(
+                          selected ? item.activeIcon : item.icon,
+                          color: selected ? _orangePrimary : AppColors.textHint,
+                          size: 24,
                         ),
                       ),
-                      Icon(
-                        selected ? item.activeIcon : item.icon,
-                        color: selected ? AppColors.primary : AppColors.textHint,
-                        size: 24,
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        item.label,
-                        style: TextStyle(
-                          color: selected ? AppColors.primary : AppColors.textHint,
-                          fontSize: 10,
-                          fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
+                      const SizedBox(height: 4),
+                      Flexible(
+                        child: Text(
+                          item.label,
+                          style: TextStyle(
+                            color: selected ? _orangePrimary : AppColors.textHint,
+                            fontSize: 11,
+                            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -113,21 +127,21 @@ class _NavItem {
   const _NavItem(this.activeIcon, this.icon, this.label);
 }
 
-// ═══════════════════════════════════════════════════════
-//  HOME SCREEN
-// ═══════════════════════════════════════════════════════
+// ============================================================
+// MODERN HOME SCREEN - ELEGANT & HUMAN-CENTRIC
+// ============================================================
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
   final List<_QuickActionData> _quickActions = const [
-    _QuickActionData(Icons.search_rounded, 'Jelajahi', AppColors.primary, '/marketplace'),
-    _QuickActionData(Icons.calculate_rounded, 'BEP', AppColors.gold, '/bep-simulation'),
-    _QuickActionData(Icons.auto_awesome_rounded, 'AI Rekom', AppColors.primary, '/ai-recommendation'),
-    _QuickActionData(Icons.psychology_rounded, 'AI Sim', AppColors.primary, '/ai-simulator'),
-    _QuickActionData(Icons.timeline_rounded, 'Lacak', AppColors.primary, '/tracking'),
-    _QuickActionData(Icons.school_rounded, 'Akademi', AppColors.primary, '/academy'),
-    _QuickActionData(Icons.shield_rounded, 'Trust', AppColors.success, '/trust'),
-    _QuickActionData(Icons.location_on_rounded, 'Lokasi', AppColors.primary, '/location-checker'),
+    _QuickActionData(Icons.search_rounded, 'Jelajahi', _orangePrimary, '/marketplace'),
+    _QuickActionData(Icons.calculate_rounded, 'BEP', _orangePrimary, '/bep-simulation'),
+    _QuickActionData(Icons.auto_awesome_rounded, 'AI Rekom', _orangePrimary, '/ai-recommendation'),
+    _QuickActionData(Icons.psychology_rounded, 'AI Sim', _orangePrimary, '/ai-simulator'),
+    _QuickActionData(Icons.timeline_rounded, 'Lacak', _orangePrimary, '/tracking'),
+    _QuickActionData(Icons.school_rounded, 'Akademi', _orangePrimary, '/academy'),
+    _QuickActionData(Icons.shield_rounded, 'Trust', _orangePrimary, '/trust'),
+    _QuickActionData(Icons.location_on_rounded, 'Lokasi', _orangePrimary, '/location-checker'),
   ];
 
   @override
@@ -140,7 +154,7 @@ class HomeScreen extends StatelessWidget {
     if (user == null) {
       return const Scaffold(
         body: Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
+          child: CircularProgressIndicator(color: _orangePrimary),
         ),
       );
     }
@@ -149,25 +163,25 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: AppColors.bg,
       body: CustomScrollView(
         slivers: [
-          _buildSliverHeader(context, user),
+          _buildModernHeader(context, user),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 _buildPortfolioCard(user),
-                const SizedBox(height: 24),
-                _buildSectionTitle('Aksi Cepat'),
-                const SizedBox(height: 12),
+                const SizedBox(height: 28),
+                _buildSectionTitle('Akses Cepat'),
+                const SizedBox(height: 0),
                 _buildQuickActions(context),
-                const SizedBox(height: 24),
-                _buildSectionTitle('Rekomendasi', trailing: _seeAllButton(context)),
-                const SizedBox(height: 12),
+                const SizedBox(height: 28),
+                _buildSectionTitle('Rekomendasi untuk Anda', trailing: _seeAllButton(context)),
+                const SizedBox(height: 16),
                 _buildRecommendedList(franchiseProvider),
-                const SizedBox(height: 24),
+                const SizedBox(height: 28),
                 _buildFundingCard(fundingProvider),
                 const SizedBox(height: 24),
                 _buildActivityCard(),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
               ]),
             ),
           ),
@@ -176,44 +190,46 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSliverHeader(BuildContext context, user) {
+  Widget _buildModernHeader(BuildContext context, user) {
     return SliverAppBar(
-      backgroundColor: AppColors.surface,
+      backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
       floating: true,
       snap: true,
       elevation: 0,
-      scrolledUnderElevation: 0.5,
-      shadowColor: AppColors.border,
-      toolbarHeight: 72,
+      toolbarHeight: 80,
+      titleSpacing: 20,
       title: Row(
         children: [
           Container(
-            width: 38,
-            height: 38,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: AppColors.gradPrimary,
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(11),
+              color: _orangeLight,
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(Icons.storefront_rounded, color: Colors.white, size: 20),
+            child: const Icon(Icons.storefront_rounded, color: _orangePrimary, size: 24),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              RichText(
-                text: const TextSpan(children: [
-                  TextSpan(text: 'Eazy', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.textPrimary, letterSpacing: -0.5)),
-                  TextSpan(text: 'Chise', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.primary, letterSpacing: -0.5)),
-                ]),
+              const Text(
+                'EazyChise',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                  letterSpacing: -0.3,
+                ),
               ),
               Text(
-                'Halo, ${user.name.split(' ').first}! 👋',
-                style: const TextStyle(fontSize: 11, color: AppColors.textSub, fontWeight: FontWeight.w400),
+                'Halo, ${user.name.split(' ').first} 👋',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textSub,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
@@ -223,14 +239,21 @@ class HomeScreen extends StatelessWidget {
         Consumer<NotificationProvider>(
           builder: (_, notif, __) => Stack(
             children: [
-              IconButton(
-                icon: const Icon(Icons.notifications_outlined, color: AppColors.textPrimary, size: 24),
-                onPressed: () => Navigator.pushNamed(context, '/notifications'),
+              Container(
+                margin: const EdgeInsets.only(right: 12),
+                decoration: BoxDecoration(
+                  color: _orangeLight,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.notifications_none_rounded, color: AppColors.textPrimary, size: 22),
+                  onPressed: () => Navigator.pushNamed(context, '/notifications'),
+                ),
               ),
               if (notif.unreadCount > 0)
                 Positioned(
-                  right: 10,
-                  top: 10,
+                  right: 8,
+                  top: 12,
                   child: Container(
                     width: 8,
                     height: 8,
@@ -249,13 +272,11 @@ class HomeScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: AppColors.gradCard,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: AppColors.shadowPrimary,
+        color: _orangePrimary,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(color: _orangePrimary.withOpacity(0.25), blurRadius: 24, offset: const Offset(0, 10)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,32 +284,48 @@ class HomeScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Total Portofolio', style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500)),
+              const Text(
+                'Total Portofolio',
+                style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+              ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(30),
                 ),
-                child: const Row(children: [
-                  Icon(Icons.trending_up_rounded, color: Colors.white, size: 12),
-                  SizedBox(width: 4),
-                  Text('+12.5%', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
-                ]),
+                child: const Row(
+                  children: [
+                    Icon(Icons.trending_up_rounded, color: Colors.white, size: 14),
+                    SizedBox(width: 4),
+                    Text('+12.5%', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+                  ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          const Text('Rp 2.500.000.000', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -0.5)),
-          const SizedBox(height: 4),
-          const Text('Diperbarui hari ini', style: TextStyle(color: Colors.white54, fontSize: 12)),
+          const SizedBox(height: 12),
+          const Text(
+            'Rp 2.500.000.000',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 32,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -1,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Terakhir diperbarui hari ini',
+            style: TextStyle(color: Colors.white60, fontSize: 12),
+          ),
+          const SizedBox(height: 24),
+          Divider(height: 1, color: Colors.white.withOpacity(0.15)),
           const SizedBox(height: 20),
-          Container(height: 1, color: Colors.white.withOpacity(0.15)),
-          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(child: _buildCardStat('Franchise Aktif', '${user.activeFranchises}', Icons.store_rounded)),
-              Container(width: 1, height: 36, color: Colors.white.withOpacity(0.2)),
+              Container(width: 1, height: 40, color: Colors.white.withOpacity(0.2)),
               Expanded(child: _buildCardStat('Total Investasi', 'Rp ${(user.totalInvestment / 1000000).toStringAsFixed(0)}Jt', Icons.account_balance_rounded)),
             ],
           ),
@@ -299,17 +336,17 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildCardStat(String label, String value, IconData icon) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
         children: [
-          Icon(icon, color: Colors.white60, size: 18),
-          const SizedBox(width: 8),
+          Icon(icon, color: Colors.white70, size: 20),
+          const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: const TextStyle(color: Colors.white54, fontSize: 10)),
-              const SizedBox(height: 1),
-              Text(value, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+              Text(label, style: const TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w500)),
+              const SizedBox(height: 4),
+              Text(value, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
             ],
           ),
         ],
@@ -323,15 +360,17 @@ class HomeScreen extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 0.78,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        childAspectRatio: 0.85,
       ),
       itemCount: _quickActions.length,
       itemBuilder: (_, i) {
         final a = _quickActions[i];
         return GestureDetector(
           onTap: () {
+            // Haptic feedback
+            HapticFeedback.lightImpact();
             if (a.route == '/academy') {
               Navigator.push(context, MaterialPageRoute(builder: (_) => AcademyScreen()));
             } else if (a.route == '/marketplace') {
@@ -349,21 +388,31 @@ class HomeScreen extends StatelessWidget {
             }
           },
           child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                width: 56,
-                height: 56,
+                width: 64,
+                height: 60,
                 decoration: BoxDecoration(
-                  color: a.color == AppColors.gold ? AppColors.goldBg : AppColors.primaryBg,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: a.color == AppColors.gold ? AppColors.gold.withOpacity(0.2) : AppColors.primary.withOpacity(0.15),
-                  ),
+                  color: _orangeBg,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2)),
+                  ],
                 ),
-                child: Icon(a.icon, color: a.color, size: 24),
+                child: Icon(a.icon, color: _orangePrimary, size: 28),
               ),
-              const SizedBox(height: 6),
-              Text(a.label, style: const TextStyle(fontSize: 10, color: AppColors.textSub, fontWeight: FontWeight.w500), textAlign: TextAlign.center),
+              const SizedBox(height: 10),
+              Flexible(
+                child: Text(
+                  a.label,
+                  style: const TextStyle(fontSize: 12, color: AppColors.textSub, fontWeight: FontWeight.w600),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         );
@@ -372,67 +421,97 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildRecommendedList(FranchiseProvider provider) {
+    if (provider.recommended.isEmpty) {
+      return const SizedBox.shrink();
+    }
     return SizedBox(
-      height: 220,
+      height: 240,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: provider.recommended.length,
         itemBuilder: (_, i) {
           final f = provider.recommended[i];
           return Container(
-            width: 200,
-            margin: const EdgeInsets.only(right: 12),
+            width: 210,
+            margin: const EdgeInsets.only(right: 16),
             decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.border),
-              boxShadow: AppColors.shadowSm,
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppColors.border.withOpacity(0.3)),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 4)),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
                   child: Stack(
                     children: [
                       Container(
-                        height: 110,
+                        height: 120,
                         width: double.infinity,
                         color: AppColors.surfaceDim,
-                        child: Image.network(f.images, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const Icon(Icons.store_rounded, size: 40, color: AppColors.textHint)),
+                        child: Image.network(
+                          f.images,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const Icon(Icons.store_rounded, size: 48, color: AppColors.textHint),
+                        ),
                       ),
                       Positioned(
-                        top: 8, right: 8,
+                        top: 10,
+                        right: 10,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                          decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(6)),
-                          child: Row(children: [
-                            const Icon(Icons.star_rounded, color: AppColors.gold, size: 11),
-                            const SizedBox(width: 3),
-                            Text(f.rating.toStringAsFixed(1), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
-                          ]),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 4)],
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.star_rounded, color: _orangePrimary, size: 12),
+                              const SizedBox(width: 4),
+                              Text(f.rating.toStringAsFixed(1), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700)),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(f.name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.textPrimary), maxLines: 1, overflow: TextOverflow.ellipsis),
-                      const SizedBox(height: 2),
-                      Text(f.category, style: const TextStyle(color: AppColors.textHint, fontSize: 10)),
-                      const SizedBox(height: 8),
+                      Text(
+                        f.name,
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: AppColors.textPrimary),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(f.category, style: const TextStyle(color: AppColors.textHint, fontSize: 11)),
+                      const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Rp ${(f.investmentMin / 1000000).toStringAsFixed(0)}Jt', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: AppColors.primary)),
+                          Text(
+                            'Rp ${(f.investmentMin / 1000000).toStringAsFixed(0)}Jt',
+                            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: _orangePrimary),
+                          ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(color: AppColors.successBg, borderRadius: BorderRadius.circular(5)),
-                            child: Text('ROI ${f.roi}%', style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: AppColors.success)),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: AppColors.successBg,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              'ROI ${f.roi}%',
+                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.success),
+                            ),
                           ),
                         ],
                       ),
@@ -451,41 +530,52 @@ class HomeScreen extends StatelessWidget {
     final total = fp.totalFundedAmount + fp.totalPendingAmount;
     final progress = total > 0 ? fp.totalFundedAmount / total : 0.0;
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-        boxShadow: AppColors.shadowSm,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.border.withOpacity(0.3)),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 4)),
+        ],
       ),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Progres Pendanaan', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+              const Text(
+                'Progres Pendanaan',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+              ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(color: AppColors.primaryBg, borderRadius: BorderRadius.circular(6)),
-                child: Text('${fp.activeFundings.length} Proyek', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary)),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: _orangeBg,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Text(
+                  '${fp.activeFundings.length} Proyek',
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: _orangePrimary),
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 18),
           ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(10),
             child: LinearProgressIndicator(
               value: progress,
               backgroundColor: AppColors.bg,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
-              minHeight: 8,
+              valueColor: const AlwaysStoppedAnimation<Color>(_orangePrimary),
+              minHeight: 10,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _fundingStat('Terkumpul', 'Rp ${(fp.totalFundedAmount / 1000000).toStringAsFixed(1)}Jt', AppColors.primary),
+              _fundingStat('Terkumpul', 'Rp ${(fp.totalFundedAmount / 1000000).toStringAsFixed(1)}Jt', _orangePrimary),
               _fundingStat('Target', 'Rp ${(total / 1000000).toStringAsFixed(1)}Jt', AppColors.textSub),
               _fundingStat('Sisa', '12 Hari', AppColors.warning),
             ],
@@ -498,59 +588,65 @@ class HomeScreen extends StatelessWidget {
   Widget _fundingStat(String label, String value, Color color) {
     return Column(
       children: [
-        Text(value, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: color)),
-        const SizedBox(height: 2),
-        Text(label, style: const TextStyle(fontSize: 10, color: AppColors.textHint)),
+        Text(value, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: color)),
+        const SizedBox(height: 4),
+        Text(label, style: const TextStyle(fontSize: 11, color: AppColors.textHint, fontWeight: FontWeight.w500)),
       ],
     );
   }
 
   Widget _buildActivityCard() {
     final activities = [
-      _ActivityData(Icons.check_circle_rounded, 'Pendanaan disetujui', 'BEP Bakso Solo — Rp 50Jt', AppColors.success, '2j lalu'),
-      _ActivityData(Icons.pending_rounded, 'Pengajuan diproses', 'Franchise Kopi Kekinian', AppColors.warning, '5j lalu'),
-      _ActivityData(Icons.store_rounded, 'Outlet baru dibuka', 'Bakso Solo Cab. Depok', AppColors.primary, '1h lalu'),
+      _ActivityData(Icons.check_circle_rounded, 'Pendanaan disetujui', 'BEP Bakso Solo — Rp 50Jt', AppColors.success, '2 jam lalu'),
+      _ActivityData(Icons.pending_rounded, 'Pengajuan diproses', 'Franchise Kopi Kekinian', AppColors.warning, '5 jam lalu'),
+      _ActivityData(Icons.store_rounded, 'Outlet baru dibuka', 'Bakso Solo Cab. Depok', _orangePrimary, '1 jam lalu'),
     ];
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-        boxShadow: AppColors.shadowSm,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.border.withOpacity(0.3)),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 4)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Aktivitas Terkini', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
-          const SizedBox(height: 14),
+          const Text(
+            'Aktivitas Terkini',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+          ),
+          const SizedBox(height: 18),
           ...activities.map((a) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Row(
-              children: [
-                Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: a.color.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(a.icon, color: a.color, size: 18),
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: a.color.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(a.icon, color: a.color, size: 22),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(a.title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary)),
+                          const SizedBox(height: 4),
+                          Text(a.subtitle, style: const TextStyle(fontSize: 12, color: AppColors.textSub)),
+                        ],
+                      ),
+                    ),
+                    Text(a.time, style: const TextStyle(fontSize: 11, color: AppColors.textHint, fontWeight: FontWeight.w500)),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(a.title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
-                      Text(a.subtitle, style: const TextStyle(fontSize: 11, color: AppColors.textSub)),
-                    ],
-                  ),
-                ),
-                Text(a.time, style: const TextStyle(fontSize: 10, color: AppColors.textHint)),
-              ],
-            ),
-          )),
+              )),
         ],
       ),
     );
@@ -560,7 +656,15 @@ class HomeScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.textPrimary, letterSpacing: -0.3)),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+            color: AppColors.textPrimary,
+            letterSpacing: -0.3,
+          ),
+        ),
         if (trailing != null) trailing,
       ],
     );
@@ -568,8 +672,21 @@ class HomeScreen extends StatelessWidget {
 
   Widget _seeAllButton(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketplaceScreen())),
-      child: const Text('Lihat Semua', style: TextStyle(fontSize: 13, color: AppColors.primary, fontWeight: FontWeight.w600)),
+      onTap: () {
+        HapticFeedback.lightImpact();
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketplaceScreen()));
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: _orangeBg,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          'Lihat Semua',
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: _orangePrimary),
+        ),
+      ),
     );
   }
 }
